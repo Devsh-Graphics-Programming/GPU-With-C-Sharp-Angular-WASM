@@ -23,8 +23,8 @@ uniform int       iEnv;
 uniform vec3      iResolution;           // viewport resolution (in pixels)
 uniform float     iTime;                 // shader playback time (in seconds)
 uniform vec4      iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
-uniform sampler2D iChannel0;          // input channel. XX = 2D/Cube
-//uniform float     timeInSeconds;                 // (year, month, day, time in seconds)
+uniform sampler2D iChannel0;             // input channel. XX = 2D/Cube
+uniform samplerCube iChannel1;           // input channel. XX = 2D/Cube
 
 // Number of samples per pixel - bigger takes more compute
 #define NUM_SAMPLES 1
@@ -254,16 +254,16 @@ vec3 GetEnvMap2(vec3 rayDir)
 
 // Courtyard environment map texture with extra sky brightness for HDR look.
 // Commented out due to no cubemaps for this example
-// vec3 GetEnvMap(vec3 rayDir) {
-//     vec3 tex = texture(iChannel1, rayDir).xyz;
-//     tex = tex * tex;  // gamma correct
-//     vec3 light = vec3(0.0);
-//     // overhead softbox, stretched to a rectangle
-//     if ((rayDir.y > abs(rayDir.x+0.6)*0.29) && (rayDir.y > abs(rayDir.z*2.5))) light = vec3(2.0)*rayDir.y;
-//     vec3 texp = pow(tex, vec3(14.0));
-//     light *= texp;  // Masked into the existing texture's sky
-//     return (tex + light*3.0)*1.0;
-// }
+vec3 GetEnvMap(vec3 rayDir) {
+    vec3 tex = texture(iChannel1, rayDir).xyz;
+    tex = tex * tex;  // gamma correct
+    vec3 light = vec3(0.0);
+    // overhead softbox, stretched to a rectangle
+    if ((rayDir.y > abs(rayDir.x+0.6)*0.29) && (rayDir.y > abs(rayDir.z*2.5))) light = vec3(2.0)*rayDir.y;
+    vec3 texp = pow(tex, vec3(14.0));
+    light *= texp;  // Masked into the existing texture's sky
+    return (tex + light*3.0)*1.0;
+}
 
 vec3 sunDir = normalize(vec3(0.93, 1.0, 1.0));
 const vec3 sunCol = vec3(250.0, 220.0, 200.0) / 155.0;
@@ -869,6 +869,10 @@ Ray TraceOneRay(const in Ray ray) {
             else if (iEnv == 4)
             {
                 emission = GetEnvMap4(ray.dirNormalized);
+            }
+            else if (iEnv == 5)
+            {
+                emission = GetEnvMap(ray.dirNormalized);
             }
             newRay.outside = 0;  // This terminates the ray.
         }
