@@ -1,0 +1,57 @@
+{
+  "configurations": [
+    {
+      "buildCommandArgs": "",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "",
+      "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
+      "configurationType": "Release",
+      "ctestCommandArgs": "",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "linux_x64" ],
+      "installRoot": "${projectDir}\\install\\${name}",
+      "name": "WASM - Release",
+      "variables": [
+        {
+          "name": "CMAKE_EXE_LINKER_FLAGS",
+          "value": "-s WASM=1 -O3 --bind -s ALLOW_MEMORY_GROWTH=1",
+          "type": "STRING"
+        },
+        {
+          "name": "CMAKE_EXE_LINKER_FLAGS_RELEASE",
+          "value": "-O3",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "WASM - Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "installRoot": "${projectDir}\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
+      "inheritEnvironments": [ "linux_x64" ],
+      "variables": [
+        {
+          "name": "CMAKE_C_FLAGS_DEBUG",
+          "value": "-g",
+          "type": "STRING"
+        },
+        {
+          "name": "CMAKE_EXE_LINKER_FLAGS",
+          "value": "--bind -s ALLOW_MEMORY_GROWTH=1",
+          "type": "STRING"
+        },
+        {
+          "name": "CMAKE_TOOLCHAIN_FILE",
+          "value": "C:/Users/Hazard/source/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+          "type": "FILEPATH"
+        }
+      ]
+    }
+  ]
+}
