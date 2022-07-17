@@ -3,10 +3,12 @@
   "defaults": {},
   "configurations": [
     {
-      "type": "default",
-      "project": "CMakeLists.txt",
-      "projectTarget": "EmscriptenGLFW.html",
-      "name": "EmscriptenGLFW.html"
+      "type": "python",
+      "project": "run.py ",
+      "name": "Launch on localhost",
+      "externalConsole": false,
+      "stopOnEntry": true
+      //"env": { "file_dir": "${configuration.name}" } some macro that expands to where project's build dir is 
     }
   ]
 }
