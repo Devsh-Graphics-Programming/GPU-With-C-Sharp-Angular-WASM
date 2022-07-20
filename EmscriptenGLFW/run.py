@@ -13,4 +13,5 @@ if __name__ == "__main__":
     print("emrun located at: "+emrun_dir)
     print("launching " + file_dir)
 
-    emrun_process = subprocess.run(emrun_dir +" "+ file_dir + " --serve_root "+ os.getcwd() + " --port 8000", shell=True)
+    emrun_process = subprocess.call(emrun_dir +" --no_browser "+ file_dir + " --serve_root "+ os.getcwd() + " --port 8000", shell=True)
+    emrun_process = subprocess.call("C:\Program Files\Google\Chrome\Application\chrome.exe --no-sandbox --disable-gpu-watchdog --gpu-startup-dialog http://localhost:8000/"+file_dir, shell=True)

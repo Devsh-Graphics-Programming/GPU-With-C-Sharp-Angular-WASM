@@ -1,4 +1,5 @@
-#version 430
+#version 300 es
+precision highp float; precision highp int;
 /*--------------------------------------------------------------------------------------
 License CC0 - http://creativecommons.org/publicdomain/zero/1.0/
 To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
@@ -19,15 +20,18 @@ I tried to make a physically correct renderer as much as possible. For materials
 
 -Otavio Good
 */
-uniform int       iEnv;
-uniform vec3      iResolution;           // viewport resolution (in pixels)
-uniform float     iTime;                 // shader playback time (in seconds)
-uniform vec4      iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
+
 uniform sampler2D iChannel0;             // input channel. XX = 2D/Cube
 uniform samplerCube iChannel1;           // input channel. XX = 2D/Cube
+uniform ivec2 iResolution;     // viewport resolution (in pixels)
+uniform vec2 iMouse;                // mouse pixel coords. xy: current (if MLB down)
+uniform float iTime;                 // shader playback time (in seconds)
+uniform int iEnv;
+uniform float iFramesRcp; // 1/(current frame number)
+
 
 // Number of samples per pixel - bigger takes more compute
-#define NUM_SAMPLES 1
+#define NUM_SAMPLES 4
 // Number of times the ray bounces off things before terminating
 #define NUM_ITERS 7
 
@@ -243,13 +247,13 @@ vec3 GetEnvMap2(vec3 rayDir)
     // overhead softbox, stretched to a rectangle
     if ((rayDir.y > abs(rayDir.x)*1.0) && (rayDir.y > abs(rayDir.z*0.25))) final = vec3(2.0)*rayDir.y;
     // fade the softbox at the edges with a rounded rectangle.
-    float roundBox = length(max(abs(rayDir.xz/max(0.0,rayDir.y))-vec2(0.9, 4.0),0.0))-0.1;
+    float roundBox = length(max(abs(rayDir.xz/max(0.001,rayDir.y))-vec2(0.9, 4.0),0.0))-0.1;
     final += vec3(0.8)* pow(saturate(1.0 - roundBox*0.5), 6.0);
     // purple lights from side
-    final += vec3(8.0,6.0,7.0) * saturate(0.001/(1.0 - abs(rayDir.x)));
+    final += vec3(8.0,6.0,7.0) * saturate(0.001/(1.01 - abs(rayDir.x)));
     // yellow lights from side
-    final += vec3(8.0,7.0,6.0) * saturate(0.001/(1.0 - abs(rayDir.z)));
-    return vec3(final);
+    final += vec3(8.0,7.0,6.0) * saturate(0.001/(1.01 - abs(rayDir.z)));
+    return final;
 }
 
 // Courtyard environment map texture with extra sky brightness for HDR look.
@@ -324,7 +328,10 @@ vec3 GetEnvMap3(vec3 rayDir)
     finalColor += GetSunColorSmall(rayDir);
     return finalColor;
 }
-vec3 GetEnvMap4(vec3 rayDir) {   return vec3(1.0,1.0,1.0)*(rayDir.z*0.5+0.5); }
+vec3 GetEnvMap4(vec3 rayDir)
+{   
+    return vec3(1.0,1.0,1.0)*(rayDir.z*0.5+0.5);
+}
 // ---- Ray intersection functions and data structures ----
 struct RayHit
 {
@@ -852,7 +859,9 @@ Ray TraceOneRay(const in Ray ray) {
             }
 
         }
-    } else {
+    }
+    else if (!any(isnan(ray.dirNormalized)))
+    {
         if (lifetime < farPlane) {
             // Scattering
             newRay.p0 = ray.p0 + ray.dirNormalized * lifetime;
@@ -888,19 +897,18 @@ Ray TraceOneRay(const in Ray ray) {
     SaveHit(diffuse, emission);
     return newRay;
 }
+
 out vec4 fragColor;
 
 void main()
 {
     uint randomState = uint(123456789);
-    vec2 position = ( gl_FragCoord.xy / iResolution.xy );
+    vec2 position = vec2(gl_FragCoord.xy)/vec2(iResolution);
     // read original buffer so we can accumulate pixel values into back it.
-	vec4 backpixel = texture(iChannel0, position);
-    // If we use the mouse to change the view, reset the pixel accumulation buffer
-    //if (iMouse.z > 0.0) backpixel = vec4(0.0);
+	fragColor = texture(iChannel0, position);
 
 	// ---------------- First, set up the camera rays for ray marching ----------------
-	vec2 uv_orig = gl_FragCoord.xy/iResolution.xy * 2.0 - 1.0;
+	vec2 uv_orig = position * 2.0 - 1.0;
     float zoom = 1.7;
     vec2 uv = uv_orig / zoom;
 
@@ -911,18 +919,18 @@ void main()
 	vec3 camLookat=vec3(0,-2.25,0);
 
     // camera orbit with mouse movement
-    float mx=iMouse.x/iResolution.x*PI*2.0-0.7;// + Randf1i1(uint(iTime*360.0))*0.51; // + iTime*3.1415 *0.666*0.0625*0.0625;
-	float my=-iMouse.y/iResolution.y*10.0;// - sin(iTime * 0.31)*0.5;//*PI/2.01;
+    float mx=iMouse.x/float(iResolution.x)*PI*2.0-0.7;// + Randf1i1(uint(iTime*360.0))*0.51; // + iTime*3.1415 *0.666*0.0625*0.0625;
+	float my=-iMouse.y/float(iResolution.y)*10.0;// - sin(iTime * 0.31)*0.5;//*PI/2.01;
 	vec3 camPos = vec3(cos(my)*cos(mx),sin(my),cos(my)*sin(mx))*(12.2);
     // If mouse is in bottom left corner, then use pre-set camera angle.
-    if ((dot(iMouse.xy, vec2(1.0)) <= 8.0)) camPos = vec3(12.0, 0.0, 2.0);
+    //if ((dot(iMouse.xy, vec2(1.0)) <= 8.0)) camPos = vec3(12.0, 0.0, 2.0);
 
 	// Camera setup.
 	vec3 camVec=normalize(camLookat - camPos);
 	vec3 sideNorm=normalize(cross(camUp, camVec));
 	vec3 upNorm=cross(camVec, sideNorm);
 	vec3 worldFacing=(camPos + camVec);
-	vec3 worldPix = worldFacing + uv.x * sideNorm * (iResolution.x/iResolution.y) + uv.y * upNorm;
+	vec3 worldPix = worldFacing + uv.x * sideNorm * float(iResolution.x)/float(iResolution.y) + uv.y * upNorm;
 	vec3 rayVec = normalize(worldPix - camPos);
 
 	// --------------------------------------------------------------------------------
@@ -942,8 +950,8 @@ void main()
                                       upNorm * gauss.y*antialias);
 
         // Make a hash value for the ray so we can get random numbers
-        int width = int(iResolution.x);
-        int height = int(iResolution.y);
+        int width = iResolution.x;
+        int height = iResolution.y;
         ray.hash = int(gl_FragCoord.x) + int(gl_FragCoord.y) * width + s * width*height +
             int(iTime*60.0)*width*height*NUM_SAMPLES;
         ray.hash ^= int(GetRand());
@@ -978,7 +986,6 @@ void main()
     }
     colorSum /= float(NUM_SAMPLES);
 
-    // output the final color
-	fragColor = (vec4(saturate(sqrt(colorSum)),1.0) + backpixel*16)/17;
-    //fragColor=vec4(sqrt((c.xyz  )), 1.0);
+    // accumulate the final color
+	fragColor.rgb += (colorSum-fragColor.rgb)*iFramesRcp;
 }

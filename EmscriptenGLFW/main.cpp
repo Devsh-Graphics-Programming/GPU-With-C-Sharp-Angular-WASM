@@ -14,11 +14,7 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 
 #include "window.h"
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#define GL_GLEXT_PROTOTYPES
-#define EGL_EGLEXT_PROTOTYPES
-#endif
+
 
 Window* w;
 void main_loop()

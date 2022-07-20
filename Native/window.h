@@ -12,8 +12,6 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 #include "renderer.h"
 
 
-
-
 //window class contains glfw3 functions to initialize a window, handle key presses, mouse button clicks and finalizes renderering of the frame into the created glfwwindow
 class Window {
 private:
@@ -21,13 +19,19 @@ private:
 	Renderer* m_renderer;
 
 public:
+	bool m_mouse_down;
+
 	Window(int window_width, int window_height);
 
 	bool keepAlive();
 
 	void update();
 
+	void onMouseDrag();
+
 	~Window();
+
+	Renderer* getRenderer();
 };
 
 #endif // !__WINDOW_H_INCLUDED__

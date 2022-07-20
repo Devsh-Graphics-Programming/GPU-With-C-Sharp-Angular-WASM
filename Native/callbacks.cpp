@@ -8,32 +8,37 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 
 #include "renderer.h"
 #include "callbacks.h"
+#include "window.h"
 #include <iostream>
 
 //callback for handling mouse clicks
 //mouse input changes camera position
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+void mouse_button_callback(GLFWwindow* m_window, int button, int action, int mods)
 {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-	{
-		double xpos, ypos;
-		//get cursor position on screen
-		glfwGetCursorPos(window, &xpos, &ypos);
-		std::cout << "Cursor Position at (" << xpos << " : " << ypos << "\n";
-		Renderer* renderer = (Renderer*)glfwGetWindowUserPointer(window);
-		renderer->Set_iMouse(xpos, ypos, 0, 0);
+	if (button == GLFW_MOUSE_BUTTON_LEFT) {
+
+		Window* window = (Window*)glfwGetWindowUserPointer(m_window);
+		if (action == GLFW_PRESS)
+		{
+			std::cout << "Mouse down" << std::endl;
+			window->m_mouse_down = true;
+		}
+		else if (action == GLFW_RELEASE) {
+			std::cout << "Mouse up" << std::endl;
+			window->m_mouse_down = false;
+		}
 	}
 }
 
 //handle keyboard button presses
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void key_callback(GLFWwindow* m_window, int key, int scancode, int action, int mods)
 {
 	int env = -1;
 	if (action == GLFW_PRESS)
 		switch (key)
 		{
 		case GLFW_KEY_ESCAPE:
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
+			glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 			break;
 		case GLFW_KEY_5: //change the background to load a cubemap texture. clicking it again toggles texture
 			env = 5;
@@ -54,7 +59,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			break;
 		}
 	if (env != -1) {
-		Renderer* renderer = (Renderer*)glfwGetWindowUserPointer(window);
+		Window* window = (Window*)glfwGetWindowUserPointer(m_window);
+		Renderer* renderer = window->getRenderer();
 		renderer->Set_iEnv(env);
 		if (env == 5)
 			renderer->change_cubemap();

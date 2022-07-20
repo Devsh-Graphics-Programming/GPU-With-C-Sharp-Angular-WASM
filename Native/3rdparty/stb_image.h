@@ -4314,7 +4314,7 @@ static int stbi__create_png_image_raw(stbi__png* a, stbi_uc* raw, stbi__uint32 r
 
     int output_bytes = out_n * bytes;
     int filter_bytes = img_n * bytes;
-    int window_width = x;
+    int m_window_width = x;
 
     STBI_ASSERT(out_n == s->img_n || out_n == s->img_n + 1);
     a->out = (stbi_uc*)stbi__malloc_mad3(x, y, output_bytes, 0); // extra bytes to write off the end into
@@ -4341,7 +4341,7 @@ static int stbi__create_png_image_raw(stbi__png* a, stbi_uc* raw, stbi__uint32 r
             STBI_ASSERT(img_width_bytes <= x);
             cur += x * out_n - img_width_bytes; // store output to the rightmost img_len bytes, so we can decode in place
             filter_bytes = 1;
-            window_width = img_width_bytes;
+            m_window_width = img_width_bytes;
         }
 
         // if first row, use special filter that doesn't sample previous row
@@ -4384,7 +4384,7 @@ static int stbi__create_png_image_raw(stbi__png* a, stbi_uc* raw, stbi__uint32 r
 
         // this is a little gross, so that we don't switch per-pixel or per-component
         if (depth < 8 || img_n == out_n) {
-            int nk = (window_width - 1) * filter_bytes;
+            int nk = (m_window_width - 1) * filter_bytes;
 #define STBI__CASE(f) \
              case f:     \
                 for (k=0; k < nk; ++k)
@@ -5120,7 +5120,7 @@ static void* stbi__bmp_load(stbi__context* s, int* x, int* y, int* comp, int req
     stbi_uc* out;
     unsigned int mr = 0, mg = 0, mb = 0, ma = 0, all_a;
     stbi_uc pal[256][4];
-    int psize = 0, i, j, window_width;
+    int psize = 0, i, j, m_window_width;
     int flip_vertically, pad, target;
     stbi__bmp_data info;
     STBI_NOTUSED(ri);
@@ -5170,10 +5170,10 @@ static void* stbi__bmp_load(stbi__context* s, int* x, int* y, int* comp, int req
             pal[i][3] = 255;
         }
         stbi__skip(s, info.offset - 14 - info.hsz - psize * (info.hsz == 12 ? 3 : 4));
-        if (info.bpp == 4) window_width = (s->img_x + 1) >> 1;
-        else if (info.bpp == 8) window_width = s->img_x;
+        if (info.bpp == 4) m_window_width = (s->img_x + 1) >> 1;
+        else if (info.bpp == 8) m_window_width = s->img_x;
         else { STBI_FREE(out); return stbi__errpuc("bad bpp", "Corrupt BMP"); }
-        pad = (-window_width) & 3;
+        pad = (-m_window_width) & 3;
         for (j = 0; j < (int)s->img_y; ++j) {
             for (i = 0; i < (int)s->img_x; i += 2) {
                 int v = stbi__get8(s), v2 = 0;
@@ -5200,10 +5200,10 @@ static void* stbi__bmp_load(stbi__context* s, int* x, int* y, int* comp, int req
         int z = 0;
         int easy = 0;
         stbi__skip(s, info.offset - 14 - info.hsz);
-        if (info.bpp == 24) window_width = 3 * s->img_x;
-        else if (info.bpp == 16) window_width = 2 * s->img_x;
-        else /* bpp = 32 and pad = 0 */ window_width = 0;
-        pad = (-window_width) & 3;
+        if (info.bpp == 24) m_window_width = 3 * s->img_x;
+        else if (info.bpp == 16) m_window_width = 2 * s->img_x;
+        else /* bpp = 32 and pad = 0 */ m_window_width = 0;
+        pad = (-m_window_width) & 3;
         if (info.bpp == 24) {
             easy = 1;
         }
@@ -5937,7 +5937,7 @@ static void stbi__copyval(int channel, stbi_uc* dest, const stbi_uc* src)
             dest[i] = src[i];
 }
 
-static stbi_uc* stbi__pic_load_core(stbi__context* s, int window_width, int window_height, int* comp, stbi_uc* result)
+static stbi_uc* stbi__pic_load_core(stbi__context* s, int m_window_width, int m_window_height, int* comp, stbi_uc* result)
 {
     int act_comp = 0, num_packets = 0, y, chained;
     stbi__pic_packet packets[10];
@@ -5965,12 +5965,12 @@ static stbi_uc* stbi__pic_load_core(stbi__context* s, int window_width, int wind
 
     *comp = (act_comp & 0x10 ? 4 : 3); // has alpha channel?
 
-    for (y = 0; y < window_height; ++y) {
+    for (y = 0; y < m_window_height; ++y) {
         int packet_idx;
 
         for (packet_idx = 0; packet_idx < num_packets; ++packet_idx) {
             stbi__pic_packet* packet = &packets[packet_idx];
-            stbi_uc* dest = result + y * window_width * 4;
+            stbi_uc* dest = result + y * m_window_width * 4;
 
             switch (packet->type) {
             default:
@@ -5979,7 +5979,7 @@ static stbi_uc* stbi__pic_load_core(stbi__context* s, int window_width, int wind
             case 0: {//uncompressed
                 int x;
 
-                for (x = 0; x < window_width; ++x, dest += 4)
+                for (x = 0; x < m_window_width; ++x, dest += 4)
                     if (!stbi__readval(s, packet->channel, dest))
                         return 0;
                 break;
@@ -5987,7 +5987,7 @@ static stbi_uc* stbi__pic_load_core(stbi__context* s, int window_width, int wind
 
             case 1://Pure RLE
             {
-                int left = window_width, i;
+                int left = m_window_width, i;
 
                 while (left > 0) {
                     stbi_uc count, value[4];
@@ -6008,7 +6008,7 @@ static stbi_uc* stbi__pic_load_core(stbi__context* s, int window_width, int wind
             break;
 
             case 2: {//Mixed RLE
-                int left = window_width;
+                int left = m_window_width;
                 while (left > 0) {
                     int count = stbi__get8(s), i;
                     if (stbi__at_eof(s))  return stbi__errpuc("bad file", "file too short (mixed read count)");
@@ -6554,7 +6554,7 @@ static float* stbi__hdr_load(stbi__context* s, int* x, int* y, int* comp, int re
     char buffer[STBI__HDR_BUFLEN];
     char* token;
     int valid = 0;
-    int window_width, window_height;
+    int m_window_width, m_window_height;
     stbi_uc* scanline;
     float* hdr_data;
     int len;
@@ -6582,36 +6582,36 @@ static float* stbi__hdr_load(stbi__context* s, int* x, int* y, int* comp, int re
     token = stbi__hdr_gettoken(s, buffer);
     if (strncmp(token, "-Y ", 3))  return stbi__errpf("unsupported data layout", "Unsupported HDR format");
     token += 3;
-    window_height = (int)strtol(token, &token, 10);
+    m_window_height = (int)strtol(token, &token, 10);
     while (*token == ' ') ++token;
     if (strncmp(token, "+X ", 3))  return stbi__errpf("unsupported data layout", "Unsupported HDR format");
     token += 3;
-    window_width = (int)strtol(token, NULL, 10);
+    m_window_width = (int)strtol(token, NULL, 10);
 
-    *x = window_width;
-    *y = window_height;
+    *x = m_window_width;
+    *y = m_window_height;
 
     if (comp) *comp = 3;
     if (req_comp == 0) req_comp = 3;
 
-    if (!stbi__mad4sizes_valid(window_width, window_height, req_comp, sizeof(float), 0))
+    if (!stbi__mad4sizes_valid(m_window_width, m_window_height, req_comp, sizeof(float), 0))
         return stbi__errpf("too large", "HDR image is too large");
 
     // Read data
-    hdr_data = (float*)stbi__malloc_mad4(window_width, window_height, req_comp, sizeof(float), 0);
+    hdr_data = (float*)stbi__malloc_mad4(m_window_width, m_window_height, req_comp, sizeof(float), 0);
     if (!hdr_data)
         return stbi__errpf("outofmem", "Out of memory");
 
     // Load image data
     // image data is stored as some number of sca
-    if (window_width < 8 || window_width >= 32768) {
+    if (m_window_width < 8 || m_window_width >= 32768) {
         // Read flat data
-        for (j = 0; j < window_height; ++j) {
-            for (i = 0; i < window_width; ++i) {
+        for (j = 0; j < m_window_height; ++j) {
+            for (i = 0; i < m_window_width; ++i) {
                 stbi_uc rgbe[4];
             main_decode_loop:
                 stbi__getn(s, rgbe, 4);
-                stbi__hdr_convert(hdr_data + j * window_width * req_comp + i * req_comp, rgbe, req_comp);
+                stbi__hdr_convert(hdr_data + j * m_window_width * req_comp + i * req_comp, rgbe, req_comp);
             }
         }
     }
@@ -6619,7 +6619,7 @@ static float* stbi__hdr_load(stbi__context* s, int* x, int* y, int* comp, int re
         // Read RLE-encoded data
         scanline = NULL;
 
-        for (j = 0; j < window_height; ++j) {
+        for (j = 0; j < m_window_height; ++j) {
             c1 = stbi__get8(s);
             c2 = stbi__get8(s);
             len = stbi__get8(s);
@@ -6639,9 +6639,9 @@ static float* stbi__hdr_load(stbi__context* s, int* x, int* y, int* comp, int re
             }
             len <<= 8;
             len |= stbi__get8(s);
-            if (len != window_width) { STBI_FREE(hdr_data); STBI_FREE(scanline); return stbi__errpf("invalid decoded scanline length", "corrupt HDR"); }
+            if (len != m_window_width) { STBI_FREE(hdr_data); STBI_FREE(scanline); return stbi__errpf("invalid decoded scanline length", "corrupt HDR"); }
             if (scanline == NULL) {
-                scanline = (stbi_uc*)stbi__malloc_mad2(window_width, 4, 0);
+                scanline = (stbi_uc*)stbi__malloc_mad2(m_window_width, 4, 0);
                 if (!scanline) {
                     STBI_FREE(hdr_data);
                     return stbi__errpf("outofmem", "Out of memory");
@@ -6651,7 +6651,7 @@ static float* stbi__hdr_load(stbi__context* s, int* x, int* y, int* comp, int re
             for (k = 0; k < 4; ++k) {
                 int nleft;
                 i = 0;
-                while ((nleft = window_width - i) > 0) {
+                while ((nleft = m_window_width - i) > 0) {
                     count = stbi__get8(s);
                     if (count > 128) {
                         // Run
@@ -6669,8 +6669,8 @@ static float* stbi__hdr_load(stbi__context* s, int* x, int* y, int* comp, int re
                     }
                 }
             }
-            for (i = 0; i < window_width; ++i)
-                stbi__hdr_convert(hdr_data + (j * window_width + i) * req_comp, scanline + i * 4, req_comp);
+            for (i = 0; i < m_window_width; ++i)
+                stbi__hdr_convert(hdr_data + (j * m_window_width + i) * req_comp, scanline + i * 4, req_comp);
         }
         if (scanline)
             STBI_FREE(scanline);

@@ -19,35 +19,38 @@ class Renderer {
 private:
 
 	static constexpr int FBOCOUNT = 2,
-		CUBEMAP_COUNT = 2;
-	int window_width, window_height, frame_num, current_cubemap;
-	GLint iMouse_location, iChannel0_location, iChannel1_location, iTime_location, iResolution_location, iEnv_location;
-	GLFWwindow* window;
-	GLuint program,
-		FBOs[FBOCOUNT],
-		render_textures[FBOCOUNT],
-		cubemaps[CUBEMAP_COUNT];
-	GLuint VAO;
-	const char* vertex_shader = R"(
-#version 430 core
-layout( location = 0 ) in vec2 fragCoord;
-void main()
-{
-    gl_Position = vec4( fragCoord, 0.0, 1.0 );
+						 CUBEMAP_COUNT = 2;
+	int		m_window_width = -1, 
+			m_window_height = -1,
+			m_frame_counter = -1,
+			m_cubemap_index = -1;
 
-}
-)";
+	GLint	m_iMouse_location	= -1, 
+			m_iChannel0_location= -1,
+			m_iChannel1_location= -1,
+			m_iTime_location= -1,
+			m_iResolution_location= -1,
+			m_iEnv_location= -1,
+			m_iFramesRcp_location = -1;
 
-	void checkShaderStatus(GLuint obj);
-	void load_shader(const char* shaderCode, GLenum shaderType, GLuint program);
+	GLFWwindow* m_window;
+
+	GLuint m_program,
+		m_VAO,
+		m_FBOs[FBOCOUNT],
+		m_render_textures[FBOCOUNT],
+		m_cubemaps[CUBEMAP_COUNT];
+	
+	void load_shader(const char* shaderPath, GLenum shaderType);
 	void clear_render();
 	void init_cubemaps();
+	void init();
 
 public:
 	Renderer(int w, int h);
 	void change_cubemap();
 	void render();
-	void Set_iMouse(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+	void Set_iMouse(GLfloat x, GLfloat y);
 	void Set_iEnv(GLint env);
 	void Set_iTime(GLfloat t);
 };

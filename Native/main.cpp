@@ -18,6 +18,8 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 int main() {
 	Window w = Window(1280, 720);
 
+	//the standard infinite loop
+	//this needs to be replaced in emscripten
 	while (w.keepAlive())
 		w.update();
 

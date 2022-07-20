@@ -11,7 +11,7 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 
 #include <GLFW/glfw3.h>
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mouse_button_callback(GLFWwindow* m_window, int button, int action, int mods);
+void key_callback(GLFWwindow* m_window, int key, int scancode, int action, int mods);
 
 #endif // !__CALLBACKS_H_INCLUDED__
