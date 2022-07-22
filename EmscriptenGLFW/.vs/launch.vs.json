@@ -4,9 +4,24 @@
   "configurations": [
     {
       "type": "python",
+      "interpreterArguments": "",
+      "scriptArguments": "",
+      "env": {},
+      "webBrowserUrl": "http://localhost:8000/EmscriptenGLFW/build/WASM-Debug/EmscriptenGLFW.html",
       "project": "run.py",
+      "projectTarget": "CMakeLists.txt",
       "name": "Launch on localhost",
-      "externalConsole": false
+      "noDebug": true
+    },
+    {
+      "type": "python",
+      "interpreterArguments": "",
+      "scriptArguments": "",
+      "env": {},
+      "project": "run.py",
+      "projectTarget": "CMakeLists.txt",
+      "name": "Launch on localhost (no browser)",
+      "noDebug": true
     }
   ]
 }

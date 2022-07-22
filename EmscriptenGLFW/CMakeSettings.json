@@ -21,11 +21,6 @@
           "name": "CMAKE_EXE_LINKER_FLAGS_RELEASE",
           "value": "-O3",
           "type": "STRING"
-        },
-        {
-          "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "C:/Users/Hazard/source/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
-          "type": "FILEPATH"
         }
       ]
     },
@@ -38,23 +33,18 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "cmakeToolchain": "C:/Users/Hazard/source/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+      "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
       "inheritEnvironments": [ "linux_x64" ],
       "variables": [
         {
           "name": "CMAKE_C_FLAGS_DEBUG",
-          "value": "-g",
+          "value": "-O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
           "type": "STRING"
         },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
-          "value": "-g",
+          "value": "-O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
           "type": "STRING"
-        },
-        {
-          "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "C:/Users/Hazard/source/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
-          "type": "FILEPATH"
         }
       ]
     }
