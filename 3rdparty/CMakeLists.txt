@@ -8,7 +8,7 @@ get_filename_component(RELEX_DEPS_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLU
 get_filename_component(RELEX_DEPS_BINARY_PATH "${CMAKE_CURRENT_BINARY_DIR}" ABSOLUTE)
 
 set(EMSCRIPTEN_PLATFORM_DIRECTORY "${RELEX_THIRD_PARTY_PATH}/emsdk/upstream/emscripten/cmake/Modules/Platform" CACHE INTERNAL "")
-set(EMSCRIPTEN_OUTPUT "${EMSCRIPTEN_PLATFORM_DIRECTORY}/Emscripten.cmake" PARENT_SCOPE)
+set(EMSCRIPTEN_OUTPUT "${EMSCRIPTEN_PLATFORM_DIRECTORY}/Emscripten.cmake")
 
 add_custom_command(OUTPUT "${EMSCRIPTEN_OUTPUT}"
 	COMMAND ./emsdk install latest
@@ -19,6 +19,6 @@ add_custom_command(OUTPUT "${EMSCRIPTEN_OUTPUT}"
 	VERBATIM
 )
 
-add_custom_target(build_emscripten ALL
-	DEPENDS ${EMSCRIPTEN_OUTPUT}
+add_custom_target(build_emscripten
+	DEPENDS "${EMSCRIPTEN_OUTPUT}"
 )

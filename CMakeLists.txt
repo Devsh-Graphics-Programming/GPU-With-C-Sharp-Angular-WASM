@@ -29,16 +29,17 @@ if(UPDATE_SUBMODULES)
 	execute_process(COMMAND ${GIT_EXECUTABLE} -C ${RELEX_ROOT_PATH} submodule update --init --recursive)
 endif()
 
-add_subdirectory(3rdparty 3rdparty)
+add_subdirectory(3rdparty 3rdparty EXCLUDE_FROM_ALL)
 
 if(WIN32)
 	message(FATAL_ERROR "we don't support top root builds for windows OS") # there is no time to patch all OS-builds for now
 else()
 	set(EMSCRIPTEN_GLFW_CONFIG $<IF:$<CONFIG:Debug>,WASM-Debug,WASM-Release>)
 	set(EMSCRIPTEN_GLFW_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/EmscriptenGLFW")
-	set(EMSCRIPTEN_GLFW_BINARY_DIR "${EMSCRIPTEN_GLFW_SOURCE_DIR}/build")
+	set(EMSCRIPTEN_GLFW_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/EmscriptenGLFW/build")
 	
 	list(APPEND EMSCRIPTEN_GLFW_CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${EMSCRIPTEN_GLFW_CONFIG}") 
+	list(APPEND EMSCRIPTEN_GLFW_CMAKE_ARGS "-DEMSCRIPTEN_FORCE_COMPILERS=OFF") 
 	list(APPEND EMSCRIPTEN_GLFW_CMAKE_ARGS "-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${EMSCRIPTEN_PLATFORM_DIRECTORY}/Emscripten.cmake") 
 	
 	ExternalProject_Add(EmscriptenGLFW
@@ -47,7 +48,7 @@ else()
 		BINARY_DIR        "${EMSCRIPTEN_GLFW_BINARY_DIR}"
 		CMAKE_ARGS        ${EMSCRIPTEN_GLFW_CMAKE_ARGS}
 		BUILD_COMMAND     ${CMAKE_COMMAND} -E echo "Starting ${EMSCRIPTEN_GLFW_CONFIG} build"
-		COMMAND           ${CMAKE_COMMAND} --build ${EMSCRIPTEN_GLFW_BINARY_DIR} --config ${EMSCRIPTEN_GLFW_CONFIG} -v
+		COMMAND           ${CMAKE_COMMAND} --build ${EMSCRIPTEN_GLFW_BINARY_DIR} --target EmscriptenGLFW --config ${EMSCRIPTEN_GLFW_CONFIG} -v
 		INSTALL_COMMAND   ""
 		TEST_COMMAND      ""
 	)
