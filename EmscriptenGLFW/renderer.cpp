@@ -61,7 +61,7 @@ GLuint load_cubemap_from_wget(std::string faces[], std::string& env_path)
 	int window_width, window_height, nrChannels;
 	for (unsigned int i = 0; i < CUBE_SIDES_NUM; i++)
 	{
-		std::string url = "http://localhost:8000/data/env/" + faces[i];
+		std::string url = "./data/env/" + faces[i];
 		void* outBuffer; 
 		int outSize, outError;
 		emscripten_wget_data(url.c_str(), &outBuffer, &outSize, &outError);
@@ -158,7 +158,7 @@ void on_shader_data_obtained(void* args, void* data, int size) {
 //asynchronously begin downloading shader code
 void Renderer::load_shader(const char* shaderPath, GLenum shaderType)
 {
-	std::string url = "http://localhost:8000/data/" + std::string(shaderPath);
+	std::string url = "./data/" + std::string(shaderPath);
 	emscripten_async_wget_data(url.c_str(), this, on_shader_data_obtained, nullptr);
 }
 
