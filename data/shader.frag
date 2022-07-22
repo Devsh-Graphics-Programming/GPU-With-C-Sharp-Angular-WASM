@@ -31,7 +31,7 @@ uniform float iFramesRcp; // 1/(current frame number)
 
 
 // Number of samples per pixel - bigger takes more compute
-#define NUM_SAMPLES 4
+#define NUM_SAMPLES 1
 // Number of times the ray bounces off things before terminating
 #define NUM_ITERS 7
 
