@@ -4,8 +4,6 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 	message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE for Emscripten must be defined!")
 endif()
 
-include(${CMAKE_TOOLCHAIN_FILE})
-
 if(NOT WIN32)
 	set(CMAKE_CONFIGURATION_TYPES
 		"WASM-Debug"
@@ -18,6 +16,7 @@ if(NOT WIN32)
 	endif()
 endif()
 
+include(${CMAKE_TOOLCHAIN_FILE})
 project(EmscriptenGLFW)
 
 if(NOT WIN32)
@@ -35,7 +34,7 @@ if(NOT WIN32)
 	get_filename_component(EMSCRIPTEN_SDK_ROOT_PATH "${EMSCRIPTEN_TOOLCHAIN_DIRECTORY}/../../../../../" ABSOLUTE)
 
 	add_custom_target(set_emscripten_environment 
-		COMMAND source ./emsdk_env.sh
+		COMMAND ./emsdk_env.sh
 		WORKING_DIRECTORY "${EMSCRIPTEN_SDK_ROOT_PATH}"
 	)
 	

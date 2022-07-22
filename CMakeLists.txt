@@ -34,7 +34,7 @@ add_subdirectory(3rdparty 3rdparty EXCLUDE_FROM_ALL)
 if(WIN32)
 	message(FATAL_ERROR "we don't support top root builds for windows OS") # there is no time to patch all OS-builds for now
 else()
-	set(EMSCRIPTEN_GLFW_CONFIG $<IF:$<CONFIG:Debug>,WASM-Debug,WASM-Release>)
+	set(EMSCRIPTEN_GLFW_CONFIG "$<IF:$<CONFIG:Debug>,WASM-Debug,WASM-Release>")
 	set(EMSCRIPTEN_GLFW_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/EmscriptenGLFW")
 	set(EMSCRIPTEN_GLFW_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/EmscriptenGLFW/build")
 	
