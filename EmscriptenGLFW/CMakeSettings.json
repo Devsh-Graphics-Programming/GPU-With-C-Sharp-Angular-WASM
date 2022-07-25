@@ -5,6 +5,30 @@
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "",
       "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
+      "configurationType": "RelWithDebInfo",
+      "ctestCommandArgs": "",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "linux_x64" ],
+      "installRoot": "${projectDir}\\install\\${name}",
+      "name": "WASM-RelWithDebInfo",
+      "variables": [
+        {
+          "name": "CMAKE_EXE_LINKER_FLAGS",
+          "value": "-O3 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
+          "type": "STRING"
+        },
+        {
+          "name": "CMAKE_EXE_LINKER_FLAGS_RWDI",
+          "value": "-O3 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "buildCommandArgs": "",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "",
+      "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
       "configurationType": "Release",
       "ctestCommandArgs": "",
       "generator": "Ninja",
