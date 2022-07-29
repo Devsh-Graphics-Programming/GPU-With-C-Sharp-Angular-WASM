@@ -17,7 +17,7 @@ if(NOT WIN32)
 endif()
 
 include(${CMAKE_TOOLCHAIN_FILE})
-project(EmscriptenGLFW)
+project(EmscriptenHTML5)
 
 if(NOT CMAKE_HOST_WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS_WASM-RELEASE " ${CMAKE_EXE_LINKER_FLAGS_WASM-RELEASE} -O3")
@@ -27,7 +27,7 @@ endif()
 
 file(GLOB SOURCE_FILES *.cpp) 
 file(GLOB HEADER_FILES *.h *.hpp) 
-add_executable(EmscriptenGLFW ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(EmscriptenHTML5 ${SOURCE_FILES} ${HEADER_FILES})
 
 if(NOT CMAKE_HOST_WIN32)
 	cmake_path(GET CMAKE_TOOLCHAIN_FILE PARENT_PATH EMSCRIPTEN_TOOLCHAIN_DIRECTORY)
@@ -42,7 +42,7 @@ if(NOT CMAKE_HOST_WIN32)
 	add_dependencies(EmscriptenGLFW set_emscripten_environment)
 endif()
 
-set_target_properties(EmscriptenGLFW PROPERTIES 
-    LINK_FLAGS "-sUSE_WEBGL2=1 -sUSE_GLFW=3 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY"
+set_target_properties(EmscriptenHTML5 PROPERTIES 
+    LINK_FLAGS "-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY"
     SUFFIX ".html"
 )
