@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Emscripten">
+      <Configuration>Debug</Configuration>
+      <Platform>Emscripten</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Emscripten">
+      <Configuration>Release</Configuration>
+      <Platform>Emscripten</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="renderer.cpp" />
+    <ClCompile Include="renderer_wrap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="renderer.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{e38c6a89-f1ec-4130-8f7d-ea4d736a62c9}</ProjectGuid>
+    <RootNamespace>LibRenderer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>emcc</PlatformToolset>
+    <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
+    <ConfigurationType>HTMLPage</ConfigurationType>
+    <PlatformToolset>emcc</PlatformToolset>
+    <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
+    <TargetExt>.wasm</TargetExt>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <CustomBuildAfterTargets>PreBuildEvent</CustomBuildAfterTargets>
+    <IntDir>$(Configuration)\</IntDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <TargetExt>.wasm</TargetExt>
+    <CustomBuildAfterTargets>PreBuildEvent</CustomBuildAfterTargets>
+    <IntDir>$(Configuration)\</IntDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
+    <ClCompile>
+      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -sRELOCATABLE=1 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <CustomBuildStep>
+      <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>$(ProjectDir)renderer_wrap.cpp</Outputs>
+      <TreatOutputAsContent>false</TreatOutputAsContent>
+      <Message>Running swig language bridge</Message>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>if not exists $(SolutionDir)Client/SWIG mkdir $(SolutionDir)Client/SWIG</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
+    <ClCompile>
+      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -sRELOCATABLE=1 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <CustomBuildStep>
+      <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>$(ProjectDir)renderer_wrap.cpp</Outputs>
+      <TreatOutputAsContent>false</TreatOutputAsContent>
+      <Message>Running swig language bridge</Message>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>if not exists $(SolutionDir)Client/SWIG mkdir $(SolutionDir)Client/SWIG</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -25,9 +25,17 @@ if(NOT CMAKE_HOST_WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG "${CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG} -O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5")
 endif()
 
-file(GLOB SOURCE_FILES *.cpp) 
-file(GLOB HEADER_FILES *.h *.hpp) 
-add_executable(EmscriptenHTML5 ${SOURCE_FILES} ${HEADER_FILES})
+set(SOURCE_FILES window.cpp callbacks.cpp main.cpp) 
+set(HEADER_FILES window.h callbacks.h) 
+
+set(RENDERER_FILES renderer.cpp renderer.h)
+
+add_library(Renderer SHARED
+	${RENDERER_FILES}
+)
+
+
+add_executable(EmscriptenHTML5 ${SOURCE_FILES} ${HEADER_FILES} )
 
 if(NOT CMAKE_HOST_WIN32)
 	cmake_path(GET CMAKE_TOOLCHAIN_FILE PARENT_PATH EMSCRIPTEN_TOOLCHAIN_DIRECTORY)
@@ -42,7 +50,17 @@ if(NOT CMAKE_HOST_WIN32)
 	add_dependencies(EmscriptenHTML5 set_emscripten_environment)
 endif()
 
+set_target_properties(Renderer PROPERTIES 
+	COMPILE_FLAGS "-fPIC" #position independent code
+    LINK_FLAGS "-sSIDE_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -fPIC"
+    SUFFIX ".wasm"
+)
 set_target_properties(EmscriptenHTML5 PROPERTIES 
-    LINK_FLAGS "-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY"
+	COMPILE_FLAGS "-fPIC"
+    LINK_FLAGS "-sMAIN_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -fPIC"
     SUFFIX ".html"
 )
+add_dependencies(EmscriptenHTML5 Renderer)
+target_link_libraries(EmscriptenHTML5 Renderer)
+
+message(STATUS "${CMAKE_BINARY_DIR}")
