@@ -4,7 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
     <UserSecretsId>c06cb3ac-539f-4807-926d-6eaa130a41ed</UserSecretsId>
   </PropertyGroup>
 
@@ -25,14 +24,12 @@
     <ProjectReference Include="..\LibRenderer\LibRenderer.vcxproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-  </ItemGroup>
-
+  <!--Create a native file reference to a relocatable wasm file-->
   <ItemGroup>
     <NativeFileReference Include="../bin/$(Configuration)/LibRenderer.wasm" />
   </ItemGroup>
-
+  
+  <!--Add neccessary Emscripten linker flags-->
   <PropertyGroup>
     <EmccExtraLDFlags>-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY</EmccExtraLDFlags>
   </PropertyGroup>

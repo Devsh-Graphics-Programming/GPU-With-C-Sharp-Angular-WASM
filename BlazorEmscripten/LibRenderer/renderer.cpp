@@ -181,10 +181,6 @@ Renderer::Renderer(int w, int h) {
 	m_window_height = h;
 	m_program = glCreateProgram();
 
-	//webgl does not have GL_TEXTURE_CUBE_MAP, GL_TEXTURE_2D
-	/*glEnable(GL_TEXTURE_CUBE_MAP);
-	glEnable(GL_TEXTURE_2D);*/
-
 	//create FBOs
 	glGenFramebuffers(FBOCOUNT, m_FBOs);
 	glGenTextures(FBOCOUNT, m_render_textures);

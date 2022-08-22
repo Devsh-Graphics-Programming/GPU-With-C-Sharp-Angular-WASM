@@ -1,3 +1,8 @@
+/*
+ * The only reason why we use Server is to provide files located in ../../data without duplicating them
+ */
+
+
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
@@ -36,7 +41,9 @@ namespace BlazorEmscripten
 			app.UseStaticFiles(new StaticFileOptions
 			{
 				FileProvider = new PhysicalFileProvider(path),
-				ServeUnknownFileTypes = true,
+				ServeUnknownFileTypes = true, //since our shader has the uncommon extension .vert and .frag,
+											  //blazor will not know how to treat it
+											  //however, it is possible to configure own mappings of extensions to data type
 				RequestPath = "/Data"
 			});
 			app.UseStaticFiles();

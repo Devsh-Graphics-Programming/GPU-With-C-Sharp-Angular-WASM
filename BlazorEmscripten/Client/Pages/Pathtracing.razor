@@ -3,9 +3,8 @@
 
 <PageTitle>Pathtracing</PageTitle>
 
-<h1>Pathtracing</h1>
+<h1>Pathtracing in Blazor</h1>
 
-<p role="dialog">Controls: Change background with 1,2,3,4,5. Drag mouse to rotate</p>
 
 @*without Blaozr canvas extension, it is not possible to access canvas properties with C# *@
 <canvas tabindex="-1"
@@ -15,15 +14,14 @@
         @onkeydown="KeyPress"
         width="1280" height="720" id="canvas"></canvas>
 
-<h4>@KeyPressed </h4>
-<h4>@EventInfo</h4>
-<h4>@MouseHeldDown</h4>
+<p role="dialog">Controls: Change backgrounds with 1,2,3,4,5. Drag mouse to rotate. </p>
+
+
 
 @code {
-    protected Renderer renderer;
-    protected string KeyPressed = "";
-    protected string EventInfo = "";
+    protected Renderer renderer { get; set; }
     protected bool MouseHeldDown { get; set; }
+
 
     //user input
     protected void MouseMove(MouseEventArgs e)
@@ -32,53 +30,54 @@
         if(MouseHeldDown)
             renderer.Set_iMouse((float) e.ClientX, (float) e.ClientY);
     }
+
+
     protected void MouseClickDown(MouseEventArgs e)
     {
         MouseHeldDown = true;
     }
+
+
     protected void MouseClickUp(MouseEventArgs e)
     {
         MouseHeldDown = false;
     }
+
+
     private void KeyPress(KeyboardEventArgs args)
     {
-        KeyPressed = "Key Pressed is " + args.Key;
-        EventInfo = "Event Type " + args.Type;
-        if(int.TryParse(args.Key, out int result))
+        if(int.TryParse(args.Key, out int result) && result >= 0 && result < 6)
         {
-            if(result >= 0 && result < 6)
-            {
-                if(result == 5)
-                {
-                    renderer.change_cubemap();
-                }
+            if(result == 5)
+                renderer.change_cubemap();
 
-                renderer.Set_iEnv(result);
-            }
-
+            renderer.Set_iEnv(result);
         }
     }
 
 
     DateTime start;
-    //render loop
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
             start = DateTime.Now;
-
-            //await JS.InvokeVoidAsync("setupContext",  "canvas");
             renderer = new Renderer(1280, 720);
+            await JS.InvokeVoidAsync("initRenderLoop",  DotNetObjectReference.Create(this));
         }
-        var timespan = start - DateTime.Now;
-        float timeF = (float) timespan.TotalSeconds;
-        //set time
-        renderer.Set_iTime(timeF);
+    }
 
-        //render
+
+    [JSInvokable]
+    public void RenderInBlazor()
+    {
+        //set time uniform in frag shader
+        var timespan = start - DateTime.Now;
+        renderer.Set_iTime((float) timespan.TotalSeconds);
+
+        //render to active gl context - canvas
         renderer.render();
     }
 
-    protected override bool ShouldRender() => true;
+
 }
