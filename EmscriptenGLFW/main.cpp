@@ -16,19 +16,19 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 
 
 
-Window* w;
+Window* window;
 void main_loop()
 {
-	w->update();
+	window->update();
 }
 
 int main() {
-	w = new Window(1280, 720);
+	window = new Window(1280, 720);
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(main_loop, 0, true);
 #else
-	while (w->keepAlive())
-		w->update();
+	while (window->keepAlive())
+		window->update();
 #endif
 
 }
