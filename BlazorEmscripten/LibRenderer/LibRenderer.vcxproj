@@ -29,7 +29,7 @@
     <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
-    <ConfigurationType>HTMLPage</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>emcc</PlatformToolset>
     <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
   </PropertyGroup>
@@ -55,7 +55,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
     <ClCompile>
-      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic --no-entry -sRELOCATABLE=1 -gsource-map %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic --no-entry -sRELOCATABLE=1 -sWASM=1 -gsource-map %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <CustomBuildStep>
       <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>
@@ -71,7 +71,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
     <ClCompile>
-      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -sRELOCATABLE=1 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic --no-entry -sRELOCATABLE=1 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <CustomBuildStep>
       <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>
