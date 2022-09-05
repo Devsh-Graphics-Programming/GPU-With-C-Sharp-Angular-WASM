@@ -62,12 +62,12 @@
       "variables": [
         {
           "name": "CMAKE_C_FLAGS_DEBUG",
-          "value": "-O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
+          "value": "-O0 -fdebug-compilation-dir='../../' -g --emrun",
           "type": "STRING"
         },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
-          "value": "-O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
+          "value": "-O0 -fdebug-compilation-dir='../../' -g --emrun",
           "type": "STRING"
         }
       ]

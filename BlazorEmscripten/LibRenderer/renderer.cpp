@@ -14,7 +14,7 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdparty/stb_image.h"
 
-const std::string data_url = "https://localhost:7152/data/";
+const std::string data_url = "http://localhost:8000/data/";
 
 //clear accumulated image
 void Renderer::clear_render() {

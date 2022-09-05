@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-file_dir = "EmscriptenHTML5/build/WASM-Debug/EmscriptenHTML.html"
+file_dir = "EmscriptenHTML5/build/WASM-Debug/EmscriptenHTML5.html"
 if __name__ == "__main__":     
     cwd_up = os.getcwd() + "/../" 
     os.chdir(cwd_up)
