@@ -14,7 +14,7 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdparty/stb_image.h"
 
-const std::string data_url = "https://localhost:7152/data/";
+const std::string data_url = "../data/";
 
 //clear accumulated image
 void Renderer::clear_render() {
@@ -160,13 +160,13 @@ void Renderer::load_shader(const char* shaderPath, GLenum shaderType)
 {
 
 	std::string url = data_url + std::string(shaderPath);
-	std::cout << "Loading shader " << url;
+	std::cout << "Loading shader " << url << std::endl;
 	emscripten_async_wget_data(url.c_str(), this, on_shader_data_obtained, nullptr);
 }
 
 
 Renderer::Renderer(int w, int h) {
-	std::cout << "Creating renderer";
+	std::cout << "Creating renderer\n";
 	EmscriptenWebGLContextAttributes attr;
 	emscripten_webgl_init_context_attributes(&attr);
 	attr.alpha = attr.depth = attr.stencil = attr.antialias = attr.preserveDrawingBuffer = attr.failIfMajorPerformanceCaveat = 0;
@@ -194,7 +194,7 @@ Renderer::Renderer(int w, int h) {
 		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_render_textures[i], 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
-	std::cout << "Framebuffers initialized";
+	std::cout << "Framebuffers initialized\n";
 
 	m_shaders_loaded = 0;
 	//load a simple oneliner vertex shader
@@ -229,7 +229,7 @@ Renderer::Renderer(int w, int h) {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindVertexArray(0);
-	std::cout << "VAO initialized";
+	std::cout << "VAO initialized\n";
 
 
 }

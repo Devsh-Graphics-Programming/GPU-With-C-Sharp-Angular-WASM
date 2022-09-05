@@ -14,9 +14,6 @@
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="renderer_wrap.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="renderer.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{e38c6a89-f1ec-4130-8f7d-ea4d736a62c9}</ProjectGuid>
@@ -24,12 +21,12 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>WebAssembly</ConfigurationType>
     <PlatformToolset>emcc</PlatformToolset>
     <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>WebAssembly</ConfigurationType>
     <PlatformToolset>emcc</PlatformToolset>
     <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
   </PropertyGroup>
@@ -40,22 +37,26 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
-    <TargetExt>.wasm</TargetExt>
-    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <TargetExt>.o</TargetExt>
+    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <CustomBuildAfterTargets>PreBuildEvent</CustomBuildAfterTargets>
     <IntDir>$(Configuration)\</IntDir>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <TargetExt>.wasm</TargetExt>
+    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
+    <TargetExt>.o</TargetExt>
     <CustomBuildAfterTargets>PreBuildEvent</CustomBuildAfterTargets>
     <IntDir>$(Configuration)\</IntDir>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
     <ClCompile>
-      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic --no-entry -sRELOCATABLE=1 -sWASM=1 -gsource-map %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-sSIDE_MODULE=1 --no-entry -r %(AdditionalOptions)</AdditionalOptions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PositionIndependentCode>true</PositionIndependentCode>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <VerboseOutput>NoVerboseOutput</VerboseOutput>
     </ClCompile>
     <CustomBuildStep>
       <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>
@@ -71,7 +72,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
     <ClCompile>
-      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic --no-entry -sRELOCATABLE=1 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-sSIDE_MODULE=1 --no-entry -r %(AdditionalOptions)</AdditionalOptions>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <PositionIndependentCode>true</PositionIndependentCode>
+      <VerboseOutput>NoVerboseOutput</VerboseOutput>
     </ClCompile>
     <CustomBuildStep>
       <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>

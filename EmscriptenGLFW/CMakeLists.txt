@@ -8,8 +8,7 @@ if(NOT WIN32)
 	set(CMAKE_CONFIGURATION_TYPES
 		"WASM-Debug"
 		"WASM-Release"
-		CACHE STRING "" FORCE
-	)
+		CACHE STRING "" FORCE)
 
 	if(NOT CMAKE_BUILD_TYPE)
 		set(CMAKE_BUILD_TYPE WASM-Release CACHE STRING "Build type: WASM-Debug or WASM-Release" FORCE)
@@ -21,8 +20,8 @@ project(EmscriptenGLFW)
 
 if(NOT CMAKE_HOST_WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS_WASM-RELEASE " ${CMAKE_EXE_LINKER_FLAGS_WASM-RELEASE} -O3")
-	set(CMAKE_C_FLAGS_WASM-DEBUG " ${CMAKE_C_FLAGS_WASM-DEBUG} -O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5")
-	set(CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG "${CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG} -O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5")
+	set(CMAKE_C_FLAGS_WASM-DEBUG " ${CMAKE_C_FLAGS_WASM-DEBUG} --O0 -g --emrun")
+	set(CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG "${CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG} -O0 -g --emrun")
 endif()
 
 file(GLOB SOURCE_FILES *.cpp) 
@@ -36,8 +35,7 @@ if(NOT CMAKE_HOST_WIN32)
 	add_custom_target(set_emscripten_environment 
 		COMMAND chmod a+rwx ./emsdk_env.sh
 		COMMAND ./emsdk_env.sh
-		WORKING_DIRECTORY "${EMSCRIPTEN_SDK_ROOT_PATH}"
-	)
+		WORKING_DIRECTORY "${EMSCRIPTEN_SDK_ROOT_PATH}")
 	
 	add_dependencies(EmscriptenGLFW set_emscripten_environment)
 endif()

@@ -1,37 +1,36 @@
 # GPU With C-Sharp Angular WASM
-## C++ Compiled to WASM with Emscripten
+### C++ to WASM without GLFW
 
-<br>
-
-#Summary
-
-In this app, we get rid of GLFW and replace it with HTML5.
+In this app, we get rid of GLFW and replace it with HTML5 function calls provided in emscriptens header.
 The only things that are different compared to EmscriptenGLFW are:
 - Callbacks
-	- No longer uses glfw events 
-	- Additional event that happens when mouse cursor is moved
+	- No longer uses glfw events in favor of html ones 
+	- Additional event that happens when mouse cursor is moved as there is no static function to obtain mouse position inside render loop.
 - Window class
-	- Obtains html object with id `"#canvas"`
+	- Obtains html object with id `canvas`
 	- Sets the canvas context as webgl's current
 	- Assigns html callbacks to static methods/functions
-	- Resizes html cavas 
+	- Resizes html cavas to desired dimensions
+
+Overall, this is really similiar to using JS to initalize a WebGL/WebGL2 context, with the addition of making it work for static GL function calls.
 
 <br>
 
 # Installation
 <br>
 
-## Emscripten
+### Emscripten
 
 Set up Emscripten as explained in readme in directory above
 
 <br>
 
-## CMake
+### CMake
 
-Do not use CMake gui if you plan on using Visual Studio 2022 as an IDE.
+Launch VS2022 and use the newly added option to open a CMake project by targetting this CMakeLists.txt
 
-Instead, launch VS2022 and use the newly added option to open a CMake project by targetting this CMakeLists.txt
+![Opening a CMake project in VS2022](../Docs/img4.jpg)
+
 
 <br>
 
@@ -46,15 +45,5 @@ Another option is to change the launch target to `EmscriptenHTML5.html`, and the
 
 # Launching
 
-To properly launch this project, use the provided `run.py` script.
-It starts a local server with its root in the directory of the repository, such that it can also view the contents of `GPU-With-C-Sharp-Angular-WASM/data/` which are obtained by the built example at runtime using wget.
+Launch using ```python run.py ./EmscriptenHTML5/```
 
-
-
-<br><br><br><br><br>
-
-Notes:
--------
-
-Recommended chrome extension for debugging
-https://chrome.google.com/webstore/detail/cc%20%20-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb

@@ -8,8 +8,7 @@ if(NOT CMAKE_HOST_WIN32)
 	set(CMAKE_CONFIGURATION_TYPES
 		"WASM-Debug"
 		"WASM-Release"
-		CACHE STRING "" FORCE
-	)
+		CACHE STRING "" FORCE)
 
 	if(NOT CMAKE_BUILD_TYPE)
 		set(CMAKE_BUILD_TYPE WASM-Release CACHE STRING "Build type: WASM-Debug or WASM-Release" FORCE)
@@ -21,8 +20,8 @@ project(EmscriptenHTML5)
 
 if(NOT CMAKE_HOST_WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS_WASM-RELEASE " ${CMAKE_EXE_LINKER_FLAGS_WASM-RELEASE} -O3")
-	set(CMAKE_C_FLAGS_WASM-DEBUG " ${CMAKE_C_FLAGS_WASM-DEBUG} -O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5")
-	set(CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG "${CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG} -O0 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5")
+	set(CMAKE_C_FLAGS_WASM-DEBUG " ${CMAKE_C_FLAGS_WASM-DEBUG} -O0 -g")
+	set(CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG "${CMAKE_EXE_LINKER_FLAGS_WASM-DEBUG} -O0 -g")
 endif()
 
 file(GLOB SOURCE_FILES *.cpp) 
@@ -36,18 +35,15 @@ if(NOT CMAKE_HOST_WIN32)
 	add_custom_target(set_emscripten_environment 
 		COMMAND chmod a+rwx ./emsdk_env.sh
 		COMMAND ./emsdk_env.sh
-		WORKING_DIRECTORY "${EMSCRIPTEN_SDK_ROOT_PATH}"
-	)
+		WORKING_DIRECTORY "${EMSCRIPTEN_SDK_ROOT_PATH}")
 	
 	add_dependencies(EmscriptenHTML5 set_emscripten_environment)
 endif()
-set(WASM_64MEMORY_MODE 0 CACHE STRING "0 for 32bit, 1 for full 64, 2 for workaround" )
-if(WASM_64MEMORY_MODE STREQUAL "0" or WASM_64MEMORY_MODE STREQUAL "1" or WASM_64MEMORY_MODE STREQUAL "2")
-	
+set(WASM_64MEMORY_MODE 0 CACHE STRING "0 for 32bit, 1 for full 64, 2 for 64bit clang compilation and 32bit wasm runtime workaround")
+if("${WASM_64MEMORY_MODE}" STREQUAL "0" OR "${WASM_64MEMORY_MODE}" STREQUAL "1" OR "${WASM_64MEMORY_MODE}" STREQUAL "2")
 	set_target_properties(EmscriptenHTML5 PROPERTIES 
-    LINK_FLAGS "-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=${WASM_64MEMORY_MODE}"
-    SUFFIX ".html"
-)
+    LINK_FLAGS "-sUSE_WEBGL2=1 -sFULL_ES3=1 -sALLOW-MEMORY-GROWTH -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=${WASM_64MEMORY_MODE}"
+    SUFFIX ".html")
 else()
 message(FATAL_ERROR "Incorrect memory64 mode. Use 0, 1 or 2")
 endif()

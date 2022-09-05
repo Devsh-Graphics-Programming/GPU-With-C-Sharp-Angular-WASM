@@ -72,7 +72,7 @@
     public void RenderInBlazor()
     {
         //set time uniform in frag shader
-        var timespan = start - DateTime.Now;
+        var timespan = DateTime.Now - start;
         renderer.Set_iTime((float) timespan.TotalSeconds);
 
         //render to active gl context - canvas

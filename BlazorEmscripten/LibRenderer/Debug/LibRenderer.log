@@ -1,1 +1,4 @@
-﻿  LibRenderer.vcxproj -> C:\Users\Hazard\source\GPU-With-C-Sharp-Angular-WASM\BlazorEmscripten\bin\Debug\LibRenderer.wasm
+﻿  Running swig language bridge
+  renderer.cpp
+  renderer_wrap.cpp
+  LibRenderer.vcxproj -> D:\Hazard\Repos\GPU-With-C-Sharp-Angular-WASM\BlazorEmscripten\LibRenderer\bin\Debug\LibRenderer.o
