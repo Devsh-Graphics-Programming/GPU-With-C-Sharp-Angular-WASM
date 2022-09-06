@@ -55,8 +55,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
     <ClCompile>
-      <AdditionalOptions>-sSIDE_MODULE=1 -fpic --no-entry -sRELOCATABLE=1 -sWASM=1 -fdebug-compilation-dir="$(ProjectDir)" %(AdditionalOptions)</AdditionalOptions>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <AdditionalOptions>-sSIDE_MODULE=1 -fpic --no-entry -sWASM=1 -fdebug-compilation-dir="$(ProjectDir)" -v %(AdditionalOptions)</AdditionalOptions>
       <PositionIndependentCode>true</PositionIndependentCode>
     </ClCompile>
     <CustomBuildStep>

@@ -5,6 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\Hazard\Repos\GPU-With-C-Sharp-Angular-WASM\BlazorEmscripten\Client\bin\Debug\net6.0\browser-wasm\publish\</_PublishTargetUrl>
-    <History>False|2022-09-06T07:33:38.1493631Z;</History>
+    <History>False|2022-09-06T10:38:22.3480981Z;False|2022-09-06T12:19:49.2345482+02:00;False|2022-09-06T09:33:38.1493631+02:00;</History>
+    <LastFailureDetails />
   </PropertyGroup>
 </Project>

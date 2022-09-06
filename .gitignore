@@ -40,3 +40,4 @@ bin
 obj
 LibRenderer.tlog
 *.log
+*.dwo

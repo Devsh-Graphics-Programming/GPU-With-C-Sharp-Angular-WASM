@@ -18,16 +18,19 @@
   </ItemGroup>
 
   <!--Create a native file reference to a relocatable wasm file-->
-  <ItemGroup>
+  <!--<ItemGroup>
     <NativeFileReference Include="../bin/$(Configuration)/LibRenderer.wasm" />
-  </ItemGroup>
+  </ItemGroup>-->
   
   <!--Add neccessary Emscripten linker flags-->
   <PropertyGroup>
-    <EmccExtraLDFlags>-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=0</EmccExtraLDFlags>
+    <EmccExtraLDFlags>"../bin/$(Configuration)/LibRenderer.wasm" -sMAIN_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=0 -v</EmccExtraLDFlags>
+    <!--<EmccExtraCompilerFlags></EmccExtraCompilerFlags>-->
   </PropertyGroup>
+  
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="python SWIG/fixswig.py" />
   </Target>
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
   
 </Project>

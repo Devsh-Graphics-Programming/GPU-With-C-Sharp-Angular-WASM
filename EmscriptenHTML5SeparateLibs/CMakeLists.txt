@@ -26,16 +26,15 @@ if(NOT CMAKE_HOST_WIN32)
 endif()
 
 set(SOURCE_FILES window.cpp callbacks.cpp main.cpp) 
-set(HEADER_FILES window.h callbacks.h) 
 
 set(RENDERER_FILES renderer.cpp renderer.h)
 
 add_library(Renderer SHARED
 	${RENDERER_FILES}
-)
+) 
 
 
-add_executable(EmscriptenHTML5 ${SOURCE_FILES} ${HEADER_FILES} )
+add_executable(EmscriptenHTML5 ${SOURCE_FILES})
 
 if(NOT CMAKE_HOST_WIN32)
 	cmake_path(GET CMAKE_TOOLCHAIN_FILE PARENT_PATH EMSCRIPTEN_TOOLCHAIN_DIRECTORY)
@@ -51,13 +50,13 @@ if(NOT CMAKE_HOST_WIN32)
 endif()
 
 set_target_properties(Renderer PROPERTIES 
-	COMPILE_FLAGS "-fPIC -g" #position independent code 
-    LINK_FLAGS "-sSIDE_MODULE=1 -g -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -fPIC'"
+	COMPILE_FLAGS "-fPIC"
+    LINK_FLAGS "-sSIDE_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -fPIC"
     SUFFIX ".wasm"
 )
 set_target_properties(EmscriptenHTML5 PROPERTIES 
 	COMPILE_FLAGS "-fPIC"
-    LINK_FLAGS "-sMAIN_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -fPIC"
+    LINK_FLAGS "-sMAIN_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -fPIC" 
     SUFFIX ".html"
 )
 add_dependencies(EmscriptenHTML5 Renderer)

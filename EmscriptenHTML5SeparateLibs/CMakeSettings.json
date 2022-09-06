@@ -55,7 +55,7 @@
       "buildRoot": "${projectDir}\\build\\${name}",
       "installRoot": "${projectDir}\\install\\${name}",
       "cmakeCommandArgs": "",
-      "buildCommandArgs": "",
+      "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
       "inheritEnvironments": [ "linux_x64" ],
@@ -67,7 +67,7 @@
         },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
-          "value": "-O0 -g --emrun -fdebug-compilation-dir='../../' -g  -gsplit-dwarf -gseparate-dwarf=EmscriptenHTML5.dbg.wasm -gdwarf-5",
+          "value": "-O0 -g --emrun -g -gdwarf-5",
           "type": "STRING"
         }
       ]
