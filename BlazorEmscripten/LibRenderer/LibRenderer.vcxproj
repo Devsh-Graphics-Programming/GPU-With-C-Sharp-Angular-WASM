@@ -24,7 +24,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>WebAssembly</ConfigurationType>
     <PlatformToolset>emcc</PlatformToolset>
     <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
   </PropertyGroup>
@@ -55,7 +55,9 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
     <ClCompile>
-      <AdditionalOptions>-r -sSIDE_MODULE=1 -fpic --no-entry -sRELOCATABLE=1 -sWASM=1 -gsource-map %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-sSIDE_MODULE=1 -fpic --no-entry -sRELOCATABLE=1 -sWASM=1 -fdebug-compilation-dir="$(ProjectDir)" %(AdditionalOptions)</AdditionalOptions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PositionIndependentCode>true</PositionIndependentCode>
     </ClCompile>
     <CustomBuildStep>
       <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>

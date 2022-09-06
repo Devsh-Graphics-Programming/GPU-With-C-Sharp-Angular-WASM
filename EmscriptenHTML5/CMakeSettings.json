@@ -67,7 +67,7 @@
         },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
-          "value": "-O0 -fdebug-compilation-dir='../../' -g --emrun",
+          "value": "-O0 -fdebug-compilation-dir='../../' -g  -gsplit-dwarf -gseparate-dwarf=EmscriptenHTML5.dbg.wasm --emrun",
           "type": "STRING"
         }
       ]

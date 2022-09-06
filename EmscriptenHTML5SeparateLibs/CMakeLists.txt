@@ -51,8 +51,8 @@ if(NOT CMAKE_HOST_WIN32)
 endif()
 
 set_target_properties(Renderer PROPERTIES 
-	COMPILE_FLAGS "-fPIC" #position independent code
-    LINK_FLAGS "-sSIDE_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -fPIC"
+	COMPILE_FLAGS "-fPIC -g" #position independent code 
+    LINK_FLAGS "-sSIDE_MODULE=1 -g -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -fPIC'"
     SUFFIX ".wasm"
 )
 set_target_properties(EmscriptenHTML5 PROPERTIES 
