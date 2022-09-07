@@ -55,8 +55,10 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
     <ClCompile>
-      <AdditionalOptions>-sSIDE_MODULE=1 -fpic --no-entry -sWASM=1 -fdebug-compilation-dir="$(ProjectDir)" -v %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-sSIDE_MODULE=1 -fpic --no-entry -sWASM=1 %(AdditionalOptions)</AdditionalOptions>
       <PositionIndependentCode>true</PositionIndependentCode>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <VerboseOutput>NoVerboseOutput</VerboseOutput>
     </ClCompile>
     <CustomBuildStep>
       <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>

@@ -48,3 +48,6 @@ Notes:
 -------
 
 In order to achieve better performance, the Blazor Wasm project uses AOT compilation
+
+We dont know if mono supports dlopen 
+[#if WASM_SUPPORTS_DLOPEN](https://github.com/mono/mono/blob/5d2e3bc3b3c8184d35b2f7801e88d96470d367c4/sdks/wasm/src/driver.c#L195)
