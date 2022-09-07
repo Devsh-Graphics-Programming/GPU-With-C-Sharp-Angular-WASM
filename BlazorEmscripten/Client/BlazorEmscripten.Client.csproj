@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -14,23 +14,39 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibRenderer\LibRenderer.vcxproj" />
+    <ProjectReference Include="../LibRenderer/LibRenderer.vcxproj" />
   </ItemGroup>
 
-  <!--Create a native file reference to a relocatable wasm file-->
-  <!--<ItemGroup>
-    <NativeFileReference Include="../bin/$(Configuration)/LibRenderer.wasm" />
-  </ItemGroup>-->
+  <!--Create a native file reference to a relocatable wasm file--> 
+  <ItemGroup>
+    <NativeFileReference Include="../LibRenderer/bin/$(Configuration)/LibRenderer.o" />
+  </ItemGroup>
   
-  <!--Add neccessary Emscripten linker flags-->
   <PropertyGroup>
-    <EmccExtraLDFlags>"../bin/$(Configuration)/LibRenderer.wasm" -sMAIN_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=0 -v</EmccExtraLDFlags>
+    <EmccExtraLDFlags>-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=0</EmccExtraLDFlags>
     <!--<EmccExtraCompilerFlags></EmccExtraCompilerFlags>-->
   </PropertyGroup>
   
+  <!--Add neccessary Emscripten linker flags-->
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="python SWIG/fixswig.py" />
+    <Exec Command="python SWIG/fixswig.py&#xD;&#xA;" />
   </Target>
-  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
-  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles=" $(SolutionDir)..\data\shader.vert" DestinationFolder="$(ProjectDir)wwwroot\data" />
+    <Copy SourceFiles=" $(SolutionDir)..\data\shader.frag" DestinationFolder="$(ProjectDir)wwwroot\data" />
+    <Copy SourceFiles="$(SolutionDir)..\data\env\back.jpg"     DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\back1.jpg"    DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\bottom.jpg"   DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\bottom1.jpg"  DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\front.jpg"    DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\front1.jpg"   DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\left.jpg"     DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\left1.jpg"    DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\right.jpg"    DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\right1.jpg"   DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\top.jpg"      DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\top1.jpg"     DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+  </Target>
+
+        
 </Project>
