@@ -67,7 +67,7 @@
         },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
-          "value": "-O0 -g --emrun -g -gdwarf-5",
+          "value": "-O0 -g --emrun -gdwarf-5",
           "type": "STRING"
         }
       ]

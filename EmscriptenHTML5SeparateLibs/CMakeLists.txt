@@ -51,7 +51,7 @@ endif()
 
 set_target_properties(Renderer PROPERTIES 
 	COMPILE_FLAGS "-fPIC"
-    LINK_FLAGS "-sSIDE_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sEXPORT_ALL=1 --no-entry -fPIC"
+    LINK_FLAGS "-sSIDE_MODULE=1 -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY --no-entry -fPIC"
     SUFFIX ".wasm"
 )
 set_target_properties(EmscriptenHTML5 PROPERTIES 
