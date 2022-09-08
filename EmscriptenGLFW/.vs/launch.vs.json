@@ -8,7 +8,7 @@
       "scriptArguments": "",
       "env": {},
       "webBrowserUrl": "http://localhost:8000/EmscriptenGLFW/build/WASM-Debug/EmscriptenGLFW.html",
-      "project": "run.py",
+      "project": "../run.py",
       "projectTarget": "CMakeLists.txt",
       "name": "Launch on localhost",
       "noDebug": true
@@ -18,7 +18,7 @@
       "interpreterArguments": "",
       "scriptArguments": "",
       "env": {},
-      "project": "run.py",
+      "project": "../run.py",
       "projectTarget": "CMakeLists.txt",
       "name": "Launch on localhost (no browser)",
       "noDebug": true

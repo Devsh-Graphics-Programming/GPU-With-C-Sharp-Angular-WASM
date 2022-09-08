@@ -14,12 +14,12 @@
       "variables": [
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
-          "value": "-O1 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
+          "value": "-O1 -g --emrun -gsplit-dwarf -gseparate-dwarf=DWARF_debug_symbols.dbg.wasm -gdwarf-5",
           "type": "STRING"
         },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS_RWDI",
-          "value": "-O1 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
+          "value": "-O1 -g --emrun -gsplit-dwarf -gseparate-dwarf=DWARF_debug_symbols.dbg.wasm -gdwarf-5",
           "type": "STRING"
         }
       ]
@@ -62,12 +62,12 @@
       "variables": [
         {
           "name": "CMAKE_C_FLAGS_DEBUG",
-          "value": "-O0 -g --emrun -gdwarf-5",
+          "value": "-O0  -g --emrun -gdwarf-5 -gsplit-dwarf -gseparate-dwarf=DWARF_debug_symbols.dbg.wasm",
           "type": "STRING"
         },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
-          "value": "-O0 -g --emrun -gdwarf-5",
+          "value": "-O0 -g --emrun -gdwarf-5 -gsplit-dwarf -gseparate-dwarf=DWARF_debug_symbols.dbg.wasm",
           "type": "STRING"
         }
       ]

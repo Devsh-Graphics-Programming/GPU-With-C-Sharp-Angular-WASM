@@ -14,12 +14,12 @@
       "variables": [
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
-          "value": "-O1 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
+          "value": "-O1 -g --emrun",
           "type": "STRING"
         },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS_RWDI",
-          "value": "-O1 -gsource-map -g --emrun -gsplit-dwarf -gdwarf-5",
+          "value": "-O1 -g --emrun",
           "type": "STRING"
         }
       ]

@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.8" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Sdk.win-x64" Version="6.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,18 +35,18 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Copy SourceFiles=" $(SolutionDir)..\data\shader.vert" DestinationFolder="$(ProjectDir)wwwroot\data" />
     <Copy SourceFiles=" $(SolutionDir)..\data\shader.frag" DestinationFolder="$(ProjectDir)wwwroot\data" />
-    <Copy SourceFiles="$(SolutionDir)..\data\env\back.jpg"     DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\back1.jpg"    DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\bottom.jpg"   DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\bottom1.jpg"  DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\front.jpg"    DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\front1.jpg"   DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\left.jpg"     DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\left1.jpg"    DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\right.jpg"    DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\right1.jpg"   DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\top.jpg"      DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\top1.jpg"     DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\back.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\back1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\bottom.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\bottom1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\front.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\front1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\left.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\left1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\right.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\right1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\top.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
+    <Copy SourceFiles="$(SolutionDir)..\data\env\top1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
   </Target>
 
         

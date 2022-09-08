@@ -35,6 +35,9 @@ set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 There is a [github issue](https://github.com/emscripten-core/emscripten/issues/17804) opened by us on emscripten-core/emscripten repository
 
 
+git clone git@github.com:ax3l/emscripten.git -b cmake-toolkit-side-module-shared
+
+
 <br>
 
 ## CMake

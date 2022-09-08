@@ -38,6 +38,7 @@ git clone https://github.com/Devsh-Graphics-Programming/GPU-With-C-Sharp-Angular
 Instead of the standard C++ and C# compiler, the apps in this repository use Emscripten.
 
 To install, clone the repository somewhere on your machine:
+
 ```
 git clone https://github.com/emscripten-core/emsdk.git
 
@@ -61,6 +62,8 @@ Instruction on how to install Emscripten can be found on the [official site](htt
 Then, add an extra environment variable **EMSCRIPTEN**  with value `path-to-emsdk/upstream/emscripten`. We use i
 
 Once thats done and all the environment variables are assigned *(with --permament option)* you can proceed.
+
+Alas, Blazor Wasm will clone its own repo of `git@github.com:emscripten-core/emscripten.git` to `C:\Program Files\dotnet\packs\Microsoft.NET.Runtime.Emscripten.2.0.23.Sdk.win-x64\6.0.4\tools\emscripten\` or similiar version
 
 <br>
 
@@ -99,13 +102,23 @@ Install the following Visual Studio 2022 extensions
 
 ----------------------------
 
-## Chrome DWARF C/C++ Extension
+## Chrome WASM C/C++ Devtools Extension
 
 https://chrome.google.com/webstore/detail/cc%20%20-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb
 
 <br>
 
 ----------------------------
+## Chrome DWARF experimental option
+
+- Open Chrome,
+- Open Inspect Element (Ctrl + Shift + i)
+- Open Options (F1)
+- Go to Experiments
+- Enable WebAssembly Debugging: Enable DWARF Support
+
+<br>
+
 
 <br>
 
