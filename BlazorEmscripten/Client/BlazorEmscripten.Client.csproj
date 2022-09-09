@@ -21,11 +21,33 @@
   <!--Create a native file reference to a relocatable wasm file--> 
   <ItemGroup>
     <NativeFileReference Include="../LibRenderer/bin/$(Configuration)/LibRenderer.o" />
-  </ItemGroup>
+  </ItemGroup> 
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TypeScriptSourceMap>False</TypeScriptSourceMap>
+  </PropertyGroup> 
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TypeScriptSourceMap>False</TypeScriptSourceMap>
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+  </PropertyGroup>
   
   <PropertyGroup>
-    <EmccExtraLDFlags>-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=0</EmccExtraLDFlags>
-    <!--<EmccExtraCompilerFlags></EmccExtraCompilerFlags>-->
+    <EmccExtraLDFlags>-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=0 -v</EmccExtraLDFlags>
+    <OutputType>Exe</OutputType>
+    <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
+    <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+    <AnalysisLevel>6.0-recommended</AnalysisLevel>
+    <EnableNETAnalyzers>False</EnableNETAnalyzers>
+    <EmccExtraCompilerFlags>-v</EmccExtraCompilerFlags>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <Deterministic>False</Deterministic>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <Deterministic>False</Deterministic>
   </PropertyGroup>
   
   <!--Add neccessary Emscripten linker flags-->
