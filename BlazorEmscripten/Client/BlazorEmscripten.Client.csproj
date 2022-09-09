@@ -11,7 +11,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.8" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Sdk.win-x64" Version="6.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,13 +30,12 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <EmccExtraLDFlags>-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=0 -v</EmccExtraLDFlags>
+    <EmccExtraLDFlags>-sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY -sMEMORY64=0</EmccExtraLDFlags>
     <OutputType>Exe</OutputType>
     <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
     <AnalysisLevel>6.0-recommended</AnalysisLevel>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
-    <EmccExtraCompilerFlags>-v</EmccExtraCompilerFlags>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
