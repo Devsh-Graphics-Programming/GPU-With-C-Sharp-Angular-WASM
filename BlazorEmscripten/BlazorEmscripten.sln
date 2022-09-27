@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorEmscripten.Client", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibRenderer", "LibRenderer\LibRenderer.vcxproj", "{E38C6A89-F1EC-4130-8F7D-EA4D736A62C9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientNoRazor", "ClientNoRazor\ClientNoRazor.csproj", "{D0A0D399-4405-430B-94FC-062C5F777AC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{E38C6A89-F1EC-4130-8F7D-EA4D736A62C9}.Release|Any CPU.Build.0 = Release|Emscripten
 		{E38C6A89-F1EC-4130-8F7D-EA4D736A62C9}.Release|Emscripten.ActiveCfg = Release|Emscripten
 		{E38C6A89-F1EC-4130-8F7D-EA4D736A62C9}.Release|Emscripten.Build.0 = Release|Emscripten
+		{D0A0D399-4405-430B-94FC-062C5F777AC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0A0D399-4405-430B-94FC-062C5F777AC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0A0D399-4405-430B-94FC-062C5F777AC5}.Debug|Emscripten.ActiveCfg = Debug|Any CPU
+		{D0A0D399-4405-430B-94FC-062C5F777AC5}.Debug|Emscripten.Build.0 = Debug|Any CPU
+		{D0A0D399-4405-430B-94FC-062C5F777AC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0A0D399-4405-430B-94FC-062C5F777AC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0A0D399-4405-430B-94FC-062C5F777AC5}.Release|Emscripten.ActiveCfg = Release|Any CPU
+		{D0A0D399-4405-430B-94FC-062C5F777AC5}.Release|Emscripten.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

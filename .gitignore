@@ -55,3 +55,17 @@ BlazorEmscripten/Client/wwwroot/data/env/top1.jpg
 BlazorEmscripten/Client/wwwroot/data/shader.frag
 BlazorEmscripten/Client/wwwroot/data/shader.vert
 BlazorEmscripten/Client/SWIG/*.cs
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/back.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/back1.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/bottom.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/bottom1.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/front.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/front1.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/left.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/left1.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/right.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/right1.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/top.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/env/top1.jpg
+BlazorEmscripten/ClientNoRazor/wwwroot/data/shader.frag
+BlazorEmscripten/ClientNoRazor/wwwroot/data/shader.vert

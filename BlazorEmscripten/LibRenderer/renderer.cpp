@@ -14,7 +14,7 @@ Source made public only to facilitate research and bug reproduction in WASM, Esm
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdparty/stb_image.h"
 
-const std::string data_url = "../data/";
+const std::string data_url = "data/";
 
 //clear accumulated image
 void Renderer::clear_render() {
@@ -33,6 +33,8 @@ unsigned int Renderer::getProgram() { return m_program; }
 
 void Renderer::Set_iMouse(float x, float y)
 {
+	if (!m_setup_complete)return;
+
 	glUniform2f(m_iMouse_location, x, y);
 	clear_render();
 }
@@ -40,6 +42,8 @@ void Renderer::Set_iMouse(float x, float y)
 
 void Renderer::Set_iEnv(int env)
 {
+	if (!m_setup_complete)return;
+
 	glUniform1i(m_iEnv_location, env);
 	clear_render();
 }
@@ -47,6 +51,8 @@ void Renderer::Set_iEnv(int env)
 
 void Renderer::Set_iTime(float t)
 {
+	if (!m_setup_complete)return;
+
 	glUniform1f(m_iTime_location, t);
 }
 
@@ -166,6 +172,8 @@ void Renderer::load_shader(const char* shaderPath, GLenum shaderType)
 
 
 Renderer::Renderer(int w, int h) {
+	m_setup_complete = false;
+
 	std::cout << "Creating renderer\n";
 	EmscriptenWebGLContextAttributes attr;
 	emscripten_webgl_init_context_attributes(&attr);
@@ -261,8 +269,8 @@ void Renderer::init()
 	glViewport(0, 0, m_window_width, m_window_height);
 	m_frame_counter = 0;
 
-	m_setup_complete = true;
 	std::cout << "Renderer created\n";
+	m_setup_complete = true;
 }	
 
 

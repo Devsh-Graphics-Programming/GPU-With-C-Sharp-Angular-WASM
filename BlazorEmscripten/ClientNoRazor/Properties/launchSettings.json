@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "BlazorEmscripten": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "hotReloadEnabled": true,
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "applicationUrl": "https://localhost:8000;http://localhost:5152",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--no-build",
+      "nativeDebugging": true
+    }
+  }
+}
