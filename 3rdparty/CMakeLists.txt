@@ -26,6 +26,8 @@ unset(LLVM_INCLUDE_TESTS CACHE)
 get_filename_component(_ORIGINAL_SOURCE_ "${CMAKE_CURRENT_SOURCE_DIR}/emsdk" ABSOLUTE)
 get_filename_component(_COPY_BIN_SOURCE_ "${CMAKE_CURRENT_BINARY_DIR}/emscripten" ABSOLUTE)
 
+set(EMSCRIPTEN_TOOLCHAIN_FILE "${_COPY_BIN_SOURCE_}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" CACHE INTERNAL "")
+
 add_custom_target(emscripten_clean
 	COMMAND "${CMAKE_COMMAND}" -E rm -Rf "${_COPY_BIN_SOURCE_}"
 	COMMAND "${CMAKE_COMMAND}" -E copy_directory "${_ORIGINAL_SOURCE_}" "${_COPY_BIN_SOURCE_}" 
