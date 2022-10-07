@@ -1,14 +1,9 @@
 # LLVM Clang with reflection
 
 set(CMAKE_BUILD_TYPE Release CACHE INTERNAL "") # for Clang when building with generators which don't support multi-config builds
-set(LLVM_ENABLE_PROJECTS CACHE INTERNAL ""
-	"lld"
-	"clang"
-) 
-set(LLVM_TARGETS_TO_BUILD CACHE INTERNAL ""
-	"host"
-	"WebAssembly"
-)
+set(LLVM_ENABLE_PROJECTS "lld;clang" CACHE STRING "") 
+set(LLVM_TARGETS_TO_BUILD "host;WebAssembly" CACHE STRING "")
+
 set(LLVM_INCLUDE_EXAMPLES OFF CACHE INTERNAL "") 
 set(LLVM_INCLUDE_TESTS OFF CACHE INTERNAL "")
 
@@ -16,8 +11,6 @@ add_subdirectory(llvm/llvm llvm)
 set(LLVM_ROOT "${CMAKE_CURRENT_BINARY_DIR}/llvm/$<CONFIG>/bin" CACHE INTERNAL "") # for .emscripten file
 
 unset(CMAKE_BUILD_TYPE CACHE)
-unset(LLVM_ENABLE_PROJECTS CACHE)
-unset(LLVM_TARGETS_TO_BUILD CACHE)
 unset(LLVM_INCLUDE_EXAMPLES CACHE)
 unset(LLVM_INCLUDE_TESTS CACHE)
 
