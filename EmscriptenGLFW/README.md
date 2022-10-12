@@ -107,7 +107,7 @@ int main() {
 
 Also because of the aformentioned issue with access to files, we decided to go with the scalable option, which meant not embedding our images into the binary. As an excercise we used both `emscripten_async_wget_data` and `emscripten_wget_data` to load shaders and images from the server (which you need to run locally whenever you launch any WASM project).
 
-## Compilation flags
+### Compilation flags
 
 Although Emscripten supports most of the Clang compiler flags, a few Emscripten specific compiler-flags needed to be added:
 - `-sWASM=1` emit webassembly, otherwise everything (including your code) compiles JavaScript as it does with `asm.js`
