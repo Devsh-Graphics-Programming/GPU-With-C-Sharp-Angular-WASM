@@ -23,8 +23,8 @@ Any rendering or similar continuous operation needs to be implemented via callba
 Although Emscripten emulates a filesystem for the purposes of C's `fopen` and C++'s input file streams, so that code will compile, it emulates them in a virtual filesystem which can either be in memory (non persistent, like a RAM disk) or Indexed.DB (basically the browser's cache/persistent storage which can be wiped at any point and should not be relied on).
 
 _This means that there's no way to get input data generated before the application start to your application, except for:_
-- _XHR Request/Fetch or a GET Request (files being served by the server)_
-- _Embedding the bytes of the resource by Emscripten into the WASM binary or "JS glue code"_
+1. _XHR Request/Fetch or a GET Request (files being served by the server)_
+2. _Embedding the bytes of the resource by Emscripten into the WASM binary or "JS glue code"_
 
 ### Faux Stack Smashing in Debug
 
@@ -97,10 +97,11 @@ Also because of the aformentioned issue with access to files, we decided to go w
 Finally a few compiler-flags needed to be added:
 - `-sWASM=1` emit webassembly, otherwise everything (including your code) compiles JavaScript as it does with `asm.js`
 - `-sWASM_BIGINT` enable 64bit integers to be used as native types in your C/C++
+- `-sASYNCIFY` needed to have access to `emscripten_async_wget_data`
 - `-sUSE_WEBGL2=1` enable the OpenGL ES to WebGL translation header and JS library
 - `-sFULL_ES3=1` enable OpenGL ES 3.0 functions in the above (it actually comes with a non-trivial amount of JS wrapping code to emulate some functions which only exist in ES)
-- `-sMIN_WEBGL_VERSION=2` disables any fallbacks in-case browser only implements WebGL 1.0 which would only present you with OpenGL ES 2.0 on the WASM side, useful if you only intend to write code for ES 3.0 and above, as it cuts down on the size of generated "JS glue code"
-- `-sASYNCIFY` needed to have access to `emscripten_async_wget_data`
+- `-sMIN_WEBGL_VERSION=2` disables any fallbacks in-case browser only implements WebGL 1.0 which would only present you with OpenGL ES 2.0 on the WASM side, useful if you only intend to write code for ES 3.0 and above, as it cuts down on the size of linked "JS glue code"
+- `-sUSE_GLFW=3` to get access to GLFW header and JS library
 
 ## Building
 
