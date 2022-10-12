@@ -5,7 +5,7 @@
 
 //to prevent this, JS will periodically invoke C# function to keep rendering
 renderLoop = () => {
-    window.csharpInstance.invokeMethodAsync('RenderInBlazor');
+    window.csharpInstance.invokeMethod('RenderInBlazor');
     window.requestAnimationFrame(renderLoop);
 
 }
