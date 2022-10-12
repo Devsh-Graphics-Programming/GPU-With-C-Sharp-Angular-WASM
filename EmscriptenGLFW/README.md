@@ -12,6 +12,16 @@ For example, there's no such thing as OpenGL ES 3.0 on the web, there's only a C
 
 Rest of the libraries, such as the standard C library, the Standard C++ Library, GLFW, SDL, etc. are bizarre hybrids where certain OS-specific API function calls are replaced with implementations that use JavaScript.
 
+### Emscripten uses Clang but not llvm-project's `libcxx` and `libcxxabi`
+
+Basically Emscripten compiles C++ into the LLVM-IR using Clang, but swaps out any headers declaring the API of the standard C and standard C++ libraries for its own, this is because a large swath of functionality such as `std::cout`, `std::mutex` or `std::thread` is implemented using some calls JavaScript as outlined above.
+
+**This also means that Emscripten's Standard C++ Library is always a bit behind the curve, and as such it will warn you whenever you try to use a C++17 feature, and I wouldn't count on being able to use C++20 features unless they're trivial and not dependent on platform specific code to implement.**
+
+The LLVM-IR is codegenned into WASM using Clang, but that functionality was merged from WASM-SDK's, WASI's and Emscripten's forks and patches.
+
+_In practice one should not concern themselves with this detail, unless one is trying to make Emscripten use custom standard library headers from an LLVM fork like we did for the Reflection TS in our later projects._
+
 ### You cannot use a "main loop"
 
 If your JS or WASM function does not return within a given timeout, the web-page's responsiveness freezes and you will eventually get a prompt from the browser whether to kill or wait for the script.
@@ -71,6 +81,8 @@ We tested option 0 and 2, both worked.
 
 ## Modifications Required
 
+### Game-Loop via callbacks
+
 To continously render without causing the browser to become unresponsive, we had to change the main function to this: 
 ```cpp
 Window* window;
@@ -91,10 +103,13 @@ int main() {
 }
 ```
 
+### File data reading
+
 Also because of the aformentioned issue with access to files, we decided to go with the scalable option, which meant not embedding our images into the binary. As an excercise we used both `emscripten_async_wget_data` and `emscripten_wget_data` to load shaders and images from the server (which you need to run locally whenever you launch any WASM project).
 
+## Compilation flags
 
-Finally a few compiler-flags needed to be added:
+Although Emscripten supports most of the Clang compiler flags, a few Emscripten specific compiler-flags needed to be added:
 - `-sWASM=1` emit webassembly, otherwise everything (including your code) compiles JavaScript as it does with `asm.js`
 - `-sWASM_BIGINT` enable 64bit integers to be used as native types in your C/C++
 - `-sASYNCIFY` needed to have access to `emscripten_async_wget_data`
