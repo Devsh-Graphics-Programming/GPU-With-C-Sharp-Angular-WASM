@@ -1,49 +1,44 @@
-# GPU With C-Sharp Angular WASM
-### C++ to WASM without GLFW
+# C++ in WASM without GLFW
 
-In this app, we get rid of GLFW and replace it with HTML5 function calls provided in emscriptens header.
-The only things that are different compared to EmscriptenGLFW are:
-- Callbacks
-	- No longer uses glfw events in favor of html ones 
-	- Additional event that happens when mouse cursor is moved as there is no static function to obtain mouse position inside render loop.
-- Window class
-	- Obtains html object with id `canvas`
-	- Sets the canvas context as webgl's current
-	- Assigns html callbacks to static methods/functions
-	- Resizes html cavas to desired dimensions
+In this iteration of the application, we get rid of GLFW and replace it with calls to Emscripten's C-bindings for HTML5 APIs. This means that the same code can no longer be compiled for Native and why the previous example served as a reference comparison between Native and WASM.
+
+## Motivation
+
+We noticed that SDL and GLFW are implemented on top of the Emscripten HTML5 header anyway and need to be maintained by Emscripten's team.
+
+To simulate the development of a C++ WASM "Web First" application we thought that one would use HTML5 directly to target the web "natively".
+
+Furthermore SDL and GLFW can only expose a subset of the HTML5 APIs, some of which might be useful for an XR application, such as cameras, GPS positioning, etc.
+
+Also the SDL and GLFW wrappers add a lot of "JS glue code" to the final build output. 
+
+## Findings
+
+### One needs to deal with making the WebGL context current before rendering to a canvas
 
 Overall, this is really similiar to using JS to initalize a WebGL/WebGL2 context, with the addition of making it work for static GL function calls.
 
-<br>
+### There's potential "Device Loss" to contend with
 
-# Installation
-<br>
+OpenGL ES will never lose your device, in WebGL your tab might get killed, overall its a situation similar to Vulkan device loss.
 
-### Emscripten
+## Modifications Made
 
-Set up Emscripten as explained in readme in directory above
+### Callbacks
+- No longer uses glfw events in favor of html ones 
+- Additional event that happens when mouse cursor is moved, and we keep track of it ourselves, as there is no static function to obtain mouse position inside render loop
 
-<br>
+### Window class
+- Obtains html object with id `canvas`
+- Sets the canvas context as webgl's current
+- Assigns html callbacks to static methods/functions
+- Resizes html cavas to desired dimensions
 
-### CMake
+### Build Options
 
-Launch VS2022 and use the newly added option to open a CMake project by targetting this CMakeLists.txt
+The `-sUSE_GLFW` compiler flag was removed, no special flag needed to get access to HTML5 headers.
 
-![Opening a CMake project in VS2022](../Docs/img4.jpg)
+## Building, Debugging and Launching
 
-
-<br>
-
-## Building
-
-In solution explorer on the top click on a button to switch between solutions and available views, then on CMake Target views and right click on EmscriptenHTML5 project to bring up a context menu that has an option to build. 
-Another option is to change the launch target to `EmscriptenHTML5.html`, and then build by pressing `Ctrl + B`
-
-<br>
-
------
-
-# Launching
-
-Launch using ```python run.py ./EmscriptenHTML5/```
+_No changes compared to the previous example._
 
