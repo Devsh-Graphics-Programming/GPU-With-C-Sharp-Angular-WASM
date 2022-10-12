@@ -1,10 +1,36 @@
-# GPU With C-Sharp Angular WASM
-### C++ to WASM Split into Libraries
+# C++ in WASM split into Libraries
 
+We wanted to find out what would happen if a part of the code was placed in a separate module and then linked together to produce the final executable.
 
-In this app variant, we look into what would happen if a part of the code was placed in a separate module and then linked to the main module.
+The Renderer class was split out into a separate library, as it does not depend on other files in the app and is only responsible for GL calls and filesystem access (now done using wget).
 
-The idea is to have a C++ renderer library that handles drawing a scene to an already active gl context, linked to a C# app with exposed C# bindings. The goal is to have a code that does allow linking as is, without altering C++ code, to see if it's possible to use the backend for rendering written in high-performance C++ within C# apps, as well as see if any debug information is lost during linking. 
+## Motivation
+
+As we will eventually no doubt end up working with large WASM codebases, we expect to be able to build separate logical units of our application as libraries to facilitate code-organisation and re-use.
+
+Also more pressingly, we had the final goal of a C++ renderer library that handles drawing a scene to an already active gl context, with exposed C# bindings linked to and used by a C# application. All to demonstrate that it is possible to use a rendering backend written in high-performance C++ within C# applications even on the web, or see what issues would disqualify such a solution. 
+
+## Evaluation Critera
+
+### Does linking work at all
+
+Yes its hanlded by `emcc` automatically, however:
+
+**Only one module can be compiled with the flag `-sMAIN_MODULE=1`, the rest need to be compiled with `-sSIDE_MODULE=1`**
+
+### Does dynamic linking work as well as static linking
+
+Yes but the side module needs to be relocatable just like on Unix you need the `-fPIC` flag.
+
+### Are "import libraries" created for WASM like for a regular Clang Native target
+
+### How does this impact debuggability?
+
+### How does it affect JavaScript and Module sizes?
+
+## Detailed Findings
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 Notice
 
@@ -16,7 +42,6 @@ In Emscripten’s case, code is typically going to run on the web. That means th
 
 For that reason, Emscripten automatically handles system libraries for you and automatically does dead code elimination etc. to do the best possible job it can at getting them small.
 
-We decided to split the Renderer class, as it does not depend on other files in the app and is only responsible for GL calls and filesystem access (now done using wget).
 Any further references to *lib* in this section will be referring to the WASM module compiled from Renderer.cpp.
 
 Firstly, while creating a lib with Emscripten, we have to specify it does not have an entry point with `--no-entry` flag and during compilation with emcc.
