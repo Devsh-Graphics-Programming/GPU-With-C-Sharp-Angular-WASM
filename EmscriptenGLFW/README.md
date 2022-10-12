@@ -18,6 +18,14 @@ If your JS or WASM function does not return within a given timeout, the web-page
 
 Any rendering or similar continuous operation needs to be implemented via callbacks instead of loops.
 
+### There's no access to files, because they all get served from a server
+
+Although Emscripten emulates a filesystem for the purposes of C's `fopen` and C++'s input file streams, so that code will compile, it emulates them in a virtual filesystem which can either be in memory (non persistent, like a RAM disk) or Indexed.DB (basically the browser's cache/persistent storage which can be wiped at any point and should not be relied on).
+
+_This means that there's no way to get input data generated before the application start to your application, except for:_
+- _XHR Request/Fetch or a GET Request (files being served by the server)_
+- _Embedding the bytes of the resource by Emscripten into the WASM binary or "JS glue code"_
+
 ### Faux Stack Smashing in Debug
 
 Emscriptens function to create the main loop is not much different from enqueueing JavaScript's `window.requestAnimationFrame(main_loop);` recursively.
@@ -39,6 +47,27 @@ The DWARF format stores an absolute path to the source files on the computer, _w
 _We tried to develop a utility for patching the paths for sources in the split DWARF, however we found out that the format is offset based, ergo the length of the path strings cannot be changed. Furthermore the paths get concatenated with directory paths which rules out exchanging paths for shorter paths and padding the remainder of the data with null characters._
 
 One letdown of DWARF is that, unlike source maps, it does not list the source files in the sources tab of chrome debugger.
+
+### Optimization Levels of O2 an O3 break debugging
+
+Emscripten has a "closure compiler" which minifies the "glue JavaScript" and deletes any unused functions, this makes it impossible to debug the "glue JavaScript" without a source map.
+
+Futhermore WASM function calls get aggressively inlined and DWARF symbols become lost or useless.
+
+### Emscripten's WASM Target is 32bit!
+
+The initial WASM MVP spec implemented in all major browsers specifies memory addresses/offsets to be 32bit.
+
+_This means that `sizeof(void*)==4` when compiling C code with Emscripten!_
+
+Aside from keeping the binary size a little smaller, it also make JS/WASM interop a little bit faster as JavaScript has no native 64bit integer type, however that only matters for pointer arithmetic which is rather done in WASM.
+
+Also there's a `memory64` proposal which might make it into WASM 2.0 which would allow 64bit memory addresses and would make `sizeof(void*)==8`, for now Emscripten has a `-sMEMORY64=` option which you can set to the following:
+- `0` off, 32bit memory
+- `1` enabled and will emit 64bit WASM as per the proposal (this breaks most dependencies shipped with Emscripten's SDK)
+- `2` will "spoof" 64bit pointers by keeping them 64bit on the WASM side (so `sizeof(void*)==8`) and 32bit on the JS side, then convert between them
+
+We tested option 0 and 2, both worked.
 
 ## Modifications Required
 
@@ -62,6 +91,17 @@ int main() {
 }
 ```
 
+Also because of the aformentioned issue with access to files, we decided to go with the scalable option, which meant not embedding our images into the binary. As an excercise we used both `emscripten_async_wget_data` and `emscripten_wget_data` to load shaders and images from the server (which you need to run locally whenever you launch any WASM project).
+
+
+Finally a few compiler-flags needed to be added:
+- `-sWASM=1` emit webassembly, otherwise everything (including your code) compiles JavaScript as it does with `asm.js`
+- `-sWASM_BIGINT` enable 64bit integers to be used as native types in your C/C++
+- `-sUSE_WEBGL2=1` enable the OpenGL ES to WebGL translation header and JS library
+- `-sFULL_ES3=1` enable OpenGL ES 3.0 functions in the above (it actually comes with a non-trivial amount of JS wrapping code to emulate some functions which only exist in ES)
+- `-sMIN_WEBGL_VERSION=2` disables any fallbacks in-case browser only implements WebGL 1.0 which would only present you with OpenGL ES 2.0 on the WASM side, useful if you only intend to write code for ES 3.0 and above, as it cuts down on the size of generated "JS glue code"
+- `-sASYNCIFY` needed to have access to `emscripten_async_wget_data`
+
 ## Building
 
 As long as you have the Emscripten Target VS2022 component installed, the solution should load and work out-of-the-box.
@@ -73,6 +113,8 @@ You can change the targets from Debug to RelWithDebInfo or Release.
 ## Debugging
 
 **TL;DR All source-level CPU debugging features you're used to on Native, just work. For a discussion of GPU debugging using Renderdoc see the section in towards the bottom of the top level repository root README.md**
+
+_However, all debugging in Release builds will be essentially non-fuctnional._
 
 To debug this app, you can use either the Chrome Developer Tools Debugger once you run the example in Crhome or you can use the VS2022 debugger, which launches the example in Chrome and connects to the Chrome Developer Tools Debugger remotely.
 
