@@ -2,7 +2,9 @@
 
 ![Emscripten in chrome](./Docs/img3.jpg)
 
-We developed a  proof of concept of a WebAssembly application to establish if it is possible to mix languages such as C# and C++ on the web with the current tools?
+We developed a  proof of concept of a WebAssembly application to answer the question:
+
+## Is it possible to mix languages such as C# and C++ on the web with the current tools?
 
 ----------------------------
 
@@ -10,20 +12,22 @@ We developed a  proof of concept of a WebAssembly application to establish if it
 
 Basically bindings to WebGL (likewise for WebGPU) and any other WebAPI usually accessible from JavaScript are absent from WebAssembly and are provided by Emscripten's curated mix of C and C++ headers with JavaScript glue code in its library.
 
-If you need a refresher or an explanation why that is, please refer to our detailed explanation here:
+If you need a refresher or an explanation why that is the case, please refer to our detailed explanation here:<br>
 https://github.com/Devsh-Graphics-Programming/JS-WASM-interop-benchmark#how-the-browser-wasm-runtime-works-and-its-limits
 
 Any further C# bindings you might use would simply be nice wrappers around a set of P/Invokes into Emscripten's WASM main module or JS library.
 
 ### Are there any alternatives to WASM, short of rewriting your C++ or C# codebase to TypeScript or JavaScript?
 
-Not really, unless you count Emscripten's `asm.js` which cross compiles C++ to JavaScript as an option, which is bound to get far less attention than the WASM backend.
+Not really, unless you count Emscripten's `asm.js` which cross compiles C++ to JavaScript as an option, which is bound to get far less attention and maintenance going forward than the WASM backend.
 
 #### PRO: Only WASM will give you support for a true 64bit target (8 byte pointers, eventually)
 
-JavaScript does not have a native 64bit integer type, this is actually one of the things holding back the full rollout of `memory64` WASM proposal and WASM2, however this item is on the roadmap.
+JavaScript does not have a native 64bit integer type, while WASM has the `memory64` WASM proposal.
 
-For now Emscripten has the `sMEMORY64=2` option which will emulate 64bit by casting 32bit WASM memory addresses (its harmless since upper half of the address is always zero), **this makes it significantly easier and less stressful to port existing C++ and C# codebases which may have made assumptions about 64bit architecture being targetted**.
+For now Emscripten has the `sMEMORY64=2` option which will emulate 64bit by casting 32bit WASM memory addresses, which is harmless since upper half of the address is always zero.
+
+**This makes it significantly easier and less stressful to port existing C++ and C# codebases which may have made assumptions about 64bit architecture being targetted**.
 
 #### PRO: Eventually the amount of JavaScript glue code emitted by Emscripten will shrink
 
@@ -42,11 +46,11 @@ The WASM browser runtime can only grow a single WASM Module's heaps, it can't re
 
 This makes debug builds non-portable across machines, we even tried "patching" DWARFs by finding and modiying file paths in the binary file. However the DWARF format is offset based, so changing the length of the path was not an option, while padding the strings with null characters messed with concatenation.
 
-The solution is to find some DWARF editing script or library that lets us modify these files properly.
+The solution is to find or develop some DWARF editing script or library that lets us modify these files properly.
 
-We'd like to highlight that Android NDK is also plagued by a similar issue of not being able to debug a C++ project on a machine that has not built it, so we consider this a minor nuisance.
+_We'd like to highlight that Android NDK is also plagued by a similar issue of not being able to debug a C++ project on a machine that has not built it, so we consider this a minor nuisance._
 
-### Downsides of using C#
+### Downsides of using any C# as opposed to pure C++
 
 #### Blazor and Mono-WASM are buggy, compromise on performance and are missing features
 
@@ -87,7 +91,7 @@ The solution is to have the Chrome Dev Tools Debugger open simultaneously in the
 
 ----------------------------
 
-## Project Structure
+## Project and Report Structure
 
 This repository contains our findings on the intricacies of having each language compiled compiling, debugging to WebAssembly and maintaining its codebase. 
 
@@ -131,7 +135,7 @@ And components:
 - Emscripten Build Target
 - .NET WebAssembly build tools
 
-### Chrome WASM C/C++ Devtools Extension
+#### Chrome WASM C/C++ Devtools Extension
 
 You wil need an extension for Chrome to be able to debug C++ code with dwarf debug symbols.
 
@@ -141,7 +145,7 @@ https://chrome.google.com/webstore/detail/cc%20%20-devtools-support-dwa/pdcpmagi
 
 _Note: Other debug symbol formats and compile options do not work as well, and will result in missing function and variable names as WASM simply enumerates all symbols and uses their indexes in place of names. This is why you need DWARF._
 
-### Emscripten (TODO: Remove, make all targets use VS2022 solutions)
+#### Emscripten (TODO: Remove, make all targets use VS2022 solutions)
 
 *EmscriptenGLFW, EmscriptenHTML5, EmscriptenHTML5SeparateLibs*
 
@@ -175,7 +179,7 @@ Once thats done and all the environment variables are assigned *(with --permamen
 
 Despite this, Blazor Wasm will clone its own fork of `git@github.com:emscripten-core/emscripten.git` to `C:\Program Files\dotnet\packs\Microsoft.NET.Runtime.Emscripten.2.0.23.Sdk.win-x64\6.0.4\tools\emscripten\` and be adamant on using that to compile the C++ portions of *BlazorEmscripten* hybrid app.
 
-### SWIG (TODO: Remove, just add swigwin binary to 3rdparty and don't add it to PATH)
+#### SWIG (TODO: Remove, just add swigwin binary to 3rdparty and don't add it to PATH)
 
 *BlazorEmscripten only*
 
@@ -197,16 +201,21 @@ git clone https://github.com/Devsh-Graphics-Programming/GPU-With-C-Sharp-Angular
 
 ### Configuring and Building
 
+Simply open each example's `.sln` file in their folder and build.
+
 TODO: Change all targets to use Visual Studio solutions instead of CMake.
 
-For details check each example's Readme
+Before the TODO is done, for details check each example's Readme
 
 ### Running
 
+Can be ran using the Visual Studio's Debug option (TODO: remove `run.py`).
 
+Otherwise a webserver like the one provied by emrun need to be started with the correct root directory equal to the repository root and one needs to manually navigate to the example build's `index.html`.
+
+Caveats:
 - The examples use a fragment shader located in a relative path at `../../data/shader.frag`
 - Similarly, ithey uses cube maps located in a relative path `../../data/env/`
-
 Therefore, carelessly moving the exectuable, `.js` or `.html` will break the app.
 
 ### CPU Debugging
@@ -223,7 +232,7 @@ The Chrome Developer Tools will show you JavaScript and WASM C/C++ function call
 
 You can also use VS2022 as the Debugger.
 
-#### MAKE SURE TO ENABLE: The Chrome DWARF experimental option
+##### MAKE SURE TO ENABLE: The Chrome DWARF experimental option
 
 In order for the aforementioned extension to work an extra option needs to be enabled in the browser:
 1. Open Chrome,
@@ -234,7 +243,7 @@ In order for the aforementioned extension to work an extra option needs to be en
 5. Enable WebAssembly Debugging: Enable DWARF Support
 ![DWARF support](./Docs/img2.jpg)
 
-#### MAKE SURE TO ENABLE THIS OPTION ON THE DEFAULT SIGNED OUT PROFILE
+##### MAKE SURE TO ENABLE THIS OPTION ON THE DEFAULT SIGNED OUT PROFILE
 
 We had an issue where VS2022 was starting its own instance of Chrome listening to a remote debug port, and this instance is started without a user being signed in. As a consequence a lot of time was spent chasing a "Blazor loses DWARF info when linking Native File Dependencies" phantom bug.
 
