@@ -44,7 +44,7 @@ The WASM browser runtime can only grow a single WASM Module's heaps, it can't re
 
 #### CON: WASM DWARF Debug Symbols save absolute paths to sourcecode (only affects C/C++)
 
-This makes debug builds non-portable across machines, we even tried "patching" DWARFs by finding and modiying file paths in the binary file. However the DWARF format is offset based, so changing the length of the path was not an option, while padding the strings with null characters messed with concatenation.
+This makes debug builds non-portable across machines, we even tried "patching" DWARFs by finding and modiying file paths in a file containing separated binary DWARF info. However the DWARF format is offset based, so changing the length of the path was not an option, while padding the strings with null characters messed with concatenation.
 
 The solution is to find or develop some DWARF editing script or library that lets us modify these files properly.
 
@@ -88,6 +88,10 @@ The Blazor Target debugger only supports mixes stacks of C#, TypeScript and Java
 This leads to an awkward situation where VS2022 has two debuggers that can debug C++ and JS or C# and JS but not both at the same time, which is mildly annoying.
 
 The solution is to have the Chrome Dev Tools Debugger open simultaneously in the chrome tab started by the VS2022 Debugger, which works most of the time but can interfere with each other with regards to breakpoint hitting and stepping.
+
+### Pros of Blazor
+
+Using other .NET dependencies is extremely easy. Because the entire .NET runtime is shipped with Blazor wasm, it's possible to load and use C# libraries without any extra effort compared to a native .NET app.  
 
 ----------------------------
 
