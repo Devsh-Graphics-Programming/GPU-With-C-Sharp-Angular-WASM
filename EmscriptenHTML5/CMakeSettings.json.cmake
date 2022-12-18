@@ -16,11 +16,6 @@
           "name": "CMAKE_EXE_LINKER_FLAGS",
           "value": "-O1 -g -gsplit-dwarf -gseparate-dwarf=EmscriptenHTML5.dbg.wasm --emrun",
           "type": "STRING"
-        },
-        {
-          "name": "CMAKE_EXE_LINKER_FLAGS_RWDI",
-          "value": "-O1 -g -gsplit-dwarf -gseparate-dwarf=EmscriptenHTML5.dbg.wasm --emrun",
-          "type": "STRING"
         }
       ]
     },
@@ -40,11 +35,6 @@
           "name": "CMAKE_EXE_LINKER_FLAGS",
           "value": "-O3",
           "type": "STRING"
-        },
-        {
-          "name": "CMAKE_EXE_LINKER_FLAGS_RELEASE",
-          "value": "-O3",
-          "type": "STRING"
         }
       ]
     },
@@ -60,11 +50,6 @@
       "cmakeToolchain": "@EMSCRIPTEN_TOOLCHAIN_FILE@",
       "inheritEnvironments": [ "linux_x64" ],
       "variables": [
-        {
-          "name": "CMAKE_C_FLAGS_DEBUG",
-          "value": "-O0 -g --emrun",
-          "type": "STRING"
-        },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
           "value": "-O0 -g -gsplit-dwarf -gseparate-dwarf=EmscriptenHTML5.dbg.wasm --emrun",

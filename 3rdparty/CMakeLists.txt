@@ -1,3 +1,5 @@
+include(ExternalProject)
+
 # 3rdparty/reflecting-emscripten settings
 set(FORCE_BLAZOR_EMSCRIPTEN_MATCH ON CACHE BOOL "")
 set(FORCE_EMSCRIPTEN_VERSION "2.0.23" CACHE INTERNAL "")
@@ -22,14 +24,31 @@ function(ADD_EMSCRIPTEN_PROJECT _CMAKE_SETTINGS_JSON_PATH_)
 
 	set(_THIS_PROJECT_BUILD_DIRECTORY_ "${_PROJECTS_BUILD_DIRECTORY_}/${_PROJECT_TARGET_NAME_}")
 	configure_file("${_CMAKE_SETTINGS_JSON_PATH_}" "${_PROJECT_DIRECTORY_}/CMakeSettings.json")
+	
+	if(GENERATE_BUILD_ONLY_TARGETS)
+		set(_PROJECT_EXT_SOURCE_DIR_ "${_PROJECT_DIRECTORY_}")
+		set(_PROJECT_EXT_BINARY_DIR_ "${_THIS_PROJECT_BUILD_DIRECTORY_}/ext")
+		set(_PROJECT_EXT_GE_BINARY_DIR_ "${_PROJECT_EXT_BINARY_DIR_}/build/WASM-$<CONFIG>")
+		
+		list(APPEND PROJECT_CMAKE_ARGS "-DCMAKE_BUILD_TYPE:STRING=WASM-$<CONFIG>") 
+		list(APPEND PROJECT_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${_PROJECT_EXT_GE_BINARY_DIR_}/install")
+		list(APPEND PROJECT_CMAKE_ARGS "-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${EMSCRIPTEN_TOOLCHAIN_FILE}")
+		list(APPEND PROJECT_CMAKE_ARGS "-DGENERATE_BUILD_ONLY_TARGETS:BOOL=${GENERATE_BUILD_ONLY_TARGETS}")
+		
+		ExternalProject_Add(${_PROJECT_TARGET_NAME_}
+			DOWNLOAD_COMMAND  ""
+			SOURCE_DIR        "${_PROJECT_EXT_SOURCE_DIR_}"
+			BINARY_DIR        "${_PROJECT_EXT_BINARY_DIR_}"
+			BUILD_COMMAND     "${CMAKE_COMMAND}" --build "${_PROJECT_EXT_GE_BINARY_DIR_}"
+			CONFIGURE_COMMAND "${CMAKE_COMMAND}" -S "${_PROJECT_EXT_SOURCE_DIR_}" -B "${_PROJECT_EXT_GE_BINARY_DIR_}" -G "Ninja" ${PROJECT_CMAKE_ARGS}
+			INSTALL_COMMAND	  ""
+			TEST_COMMAND      ""
+			BUILD_ALWAYS  	  1
+			LOG_INSTALL		  1
+		)
+		
+		unset(PROJECT_CMAKE_ARGS)
+	endif()
+	
 	unset(_THIS_PROJECT_BUILD_DIRECTORY_)
-
-	# TODO: "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_INSTALL_PREFIX:PATH="C:/private/work/programming/current/GPU-With-C-Sharp-Angular-WASM/build/projects/EmscriptenHTML5/install/WASM-Release" -DCMAKE_TOOLCHAIN_FILE:FILEPATH="C:/private/work/programming/current/GPU-With-C-Sharp-Angular-WASM/build/3rdparty/reflecting-emscripten/3rdparty/external/emscripten/unpack/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" -DCMAKE_EXE_LINKER_FLAGS:STRING="-O3" -DCMAKE_EXE_LINKER_FLAGS_RELEASE:STRING="-O3"  -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" "C:\private\work\programming\current\GPU-With-C-Sharp-Angular-WASM\EmscriptenHTML5" 2>&1"
-
-	add_custom_target(${_PROJECT_TARGET_NAME_} ALL
-		COMMAND "${CMAKE_COMMAND}" "-D_PROJECT_DIRECTORY_=${_PROJECT_DIRECTORY_}" "-D_CONFIG_=WASM-$<CONFIG>" -P "${WRAPPER_FILE_PATH}" # update project's ProjectSettings.json in order to target proper configuration while requesting the build
-		COMMAND "${VCVARS64_BAT}" # initialize vc environment
-		COMMAND "devenv.exe" "${_PROJECT_DIRECTORY_}" # configure Visual Studio's CMake project
-		COMMAND "${CMAKE_COMMAND}" -E rm -R "${_PROJECT_DIRECTORY_}/.vs"
-	)
 endfunction()
