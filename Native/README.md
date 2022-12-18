@@ -1,58 +1,32 @@
-# GPU With C-Sharp Angular WASM
-### C++ Native
+# Reference C++ Native Application
 
-To start the presentation, we prepared the most simple, native window app to make sure everything is working as intended outside of the browser. 
+To start the presentation, we prepared the most simple, OpenGL ES 3.0 native window app to make sure everything is working as intended outside of the browser. 
 
-Once we have a fully functional, traditional C++ app, we will see how far we can push it with minimal code changes to get it working at comparable speeds in the browser.
+We constrained ourselves to only using dependencies that we knew Emscripten' SDK also provides such as GLFW and OpenGL ES.
 
+Once we had a fully functional, traditional C++ app, we will see how much effort and how little code changes are required to get it working at comparable speeds in the browser.
 
-<br>
+## Building
 
-# Installation
+We added GLFW and GLEW (OpenGL ES headers) as submodules to avoid using package managers such as `vcpkg` in our original CMake build system, which would later cause inconsistencies in how to configure and generate using CMake.
 
-### Dependencies
+After finding out that VS2022 Emscripten Target projects support debugging from VS2022, we abandoned CMake as it would only be used for the Native C++ project. However keeping our dependencies as submodules was still useful for reducing the overall "invasiveness" of the setup procedure for the repository.
 
-GLFW
-
-The native example uses glfw3, and to make the installation easier, it is added as a submodule.
-Make sure the submodule is present and up to date by adding `--recurse-submodules` option to `git clone` or by using these commands after it's cloned:
+If you want to make sure the submodules are up to date and initialized after cloning, use the following commands from repository root:
 ```
+cd Native
 git submodule init
 git submodule update
 ```
 
-GLEW
+## Debugging
 
-Neccessary binaries to compile this app are cloned in `3rdparty/GLEW`
-
-<br>
-
-CMake 
-
-Configure this directory with CMake. This and only this target in this repository can use Visual Studio 2022 as generator.
-
-
-
-<br><br><br><br><br>
-
-
-# Debugging
-
-Debugging a native app is pretty straightforward using GDB. Since this is the most basic variant of the app that doesnt even run in the web browser, we can consider this a reference for subsequent apps, and will look for a way to achieve the same options of debugging as present here:
-- Inspecing locals/memory with unscrabled variable names
-- Disassembling
-- Displaying stack
-- Breakpoints
+Debugging a native app is pretty straightforward using Visual Studio. Since this is the most basic variant of the app that doesnt even run in the web browser, we can consider this a reference for subsequent apps, and will look for a way to achieve the same options of debugging as we have available here:
+- Inspecing locals/memory with original variable names
+- Disassembly
+- Displaying the stack with full variable names
+- Placing Breakpoints in original sources
 - Watches
 - Debugging shaders/pipelines using RenderDoc
 - etc.
-  
-<br><br><br><br><br>
-
-
-Notes:
--------
-- The example uses a fragment shader located in a relative path at `../../data/shader.frag`
-- Similarly, it uses cube maps located in a relative path `../../data/env/`
-
-Therefore, carelessly moving the exectuable file will break the app.
+ 
