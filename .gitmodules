@@ -7,3 +7,6 @@
 [submodule "3rdparty/llvm"]
 	path = 3rdparty/llvm
 	url = git@github.com:Devsh-Graphics-Programming/llvm-project.git
+[submodule "3rdparty/reflecting-emscripten"]
+	path = 3rdparty/reflecting-emscripten
+	url = git@github.com:Devsh-Graphics-Programming/Reflecting-Emscripten.git
