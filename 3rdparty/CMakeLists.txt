@@ -1,29 +1,217 @@
 include(ExternalProject)
+include(FetchContent)
 
-# 3rdparty/reflecting-emscripten settings
-set(FORCE_BLAZOR_EMSCRIPTEN_MATCH ON CACHE BOOL "")
-set(FORCE_EMSCRIPTEN_VERSION "2.0.23" CACHE INTERNAL "")
+# Emscripten dependencies
+# - set EMSCRIPTEN_EMSDK_DIR in order to not rely on CMake fetching content of Emscripten's emsdk 
+set(FC_EXTERNAL_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/external")
+option(FORCE_BLAZOR_EMSCRIPTEN_MATCH "" OFF)
+# define FORCE_EMSCRIPTEN_VERSION to request specific Emscripten version, eg "2.0.23"
 
-add_subdirectory(reflecting-emscripten reflecting-emscripten)
+unset(_EMSCRIPTEN_RUNTIME_PACKAGES_VERSION_)
+unset(_EMSCRIPTEN_SDK_PACKAGE_VERSION_)
+unset(_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_)
+unset(_EMSCRIPTEN_NODE_PACKAGE_VERSION_)
 
-set(WRAPPER_FILE_CONTENT [=[
-set(PROJECT_SETTINGS_JSON_OVERRIDE
-"{\n\
-  \"CurrentProjectSetting\": \"${_CONFIG_}\"\n\
-}"
-)
-file(WRITE "${_PROJECT_DIRECTORY_}/.vs/ProjectSettings.json" "${PROJECT_SETTINGS_JSON_OVERRIDE}")
-]=])
+if(DEFINED EMSCRIPTEN_EMSDK_DIR)
+	if(NOT EXISTS "${EMSCRIPTEN_EMSDK_DIR}")
+		message(FATAL_ERROR "EMSCRIPTEN_EMSDK_DIR filepath doesn't exist!")
+	endif()
+else()
+	# Dotnet
+	find_program(DOTNET_EXE "dotnet.exe" REQUIRED)
+	cmake_path(GET DOTNET_EXE PARENT_PATH DOTNET_DIR_EXE)
+	set(DOTNET_PACKS_DIR "${DOTNET_DIR_EXE}/packs")
+
+	execute_process(COMMAND "${DOTNET_EXE}" --version
+		RESULT_VARIABLE DOTNET_RESULT
+		OUTPUT_VARIABLE  DOTNET_VERSION
+	)
+
+	if(NOT "${DOTNET_RESULT}" STREQUAL "0")
+		message(FATAL_ERROR "'${DOTNET_EXE}' --version failed. Inspect your executable!")
+	endif()
+
+	string(STRIP "${DOTNET_VERSION}" DOTNET_VERSION)
+
+	message(STATUS "Found '${DOTNET_EXE}' with '${DOTNET_VERSION}' version")
+
+	if(FORCE_BLAZOR_EMSCRIPTEN_MATCH)
+		if(NOT DEFINED FORCE_EMSCRIPTEN_VERSION OR "${FORCE_EMSCRIPTEN_VERSION}" STREQUAL "")
+			set(FORCE_EMSCRIPTEN_VERSION "*")
+		endif()
+		
+		file(GLOB DOTNET_EMSCRIPTEN_RUNTIME_DIR_NAMES LIST_DIRECTORIES ON RELATIVE "${DOTNET_PACKS_DIR}" "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${FORCE_EMSCRIPTEN_VERSION}.*.win-x64")
+		list(LENGTH DOTNET_EMSCRIPTEN_RUNTIME_DIR_NAMES _ERDS_LENGTH_)
+		
+		if("${_ERDS_LENGTH_}" STREQUAL "0")
+			message(FATAL_ERROR "Could not find any Emscripten runtime with requested '${FORCE_EMSCRIPTEN_VERSION}' version. Please check your Visual Studio '.NET WebAssembly build tools' package installation!")
+		endif()
+		
+		foreach(EMSCRIPTEN_RUNTIME_DIR_NAME IN LISTS DOTNET_EMSCRIPTEN_RUNTIME_DIR_NAMES)
+			string(FIND "${EMSCRIPTEN_RUNTIME_DIR_NAME}" "Sdk" FOUND_EMSCRIPTEN_SDK_PACKAGE REVERSE)
+			string(FIND "${EMSCRIPTEN_RUNTIME_DIR_NAME}" "Python" FOUND_EMSCRIPTEN_PYTHON_PACKAGE REVERSE)
+			string(FIND "${EMSCRIPTEN_RUNTIME_DIR_NAME}" "Node" FOUND_EMSCRIPTEN_NODE_PACKAGE REVERSE)
+
+			string(REPLACE "Microsoft.NET.Runtime.Emscripten." "" EMSCRIPTEN_RUNTIME_CURRENT_VERSION "${EMSCRIPTEN_RUNTIME_DIR_NAME}")
+			string(REGEX REPLACE "\.[A-Za-z]*\.win-x64$" "" EMSCRIPTEN_RUNTIME_CURRENT_VERSION "${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}")
+
+			if(NOT "${FOUND_EMSCRIPTEN_SDK_PACKAGE}" STREQUAL "-1") # Sdk package
+				if(NOT DEFINED _EMSCRIPTEN_SDK_PACKAGE_VERSION_)
+					set(_EMSCRIPTEN_SDK_PACKAGE_VERSION_ "${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}")
+				endif()
+				
+				if("${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}" VERSION_GREATER "${_EMSCRIPTEN_SDK_PACKAGE_VERSION_}")
+					set(_EMSCRIPTEN_SDK_PACKAGE_VERSION_ "${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}")
+				endif()
+			elseif(NOT "${FOUND_EMSCRIPTEN_PYTHON_PACKAGE}" STREQUAL "-1") # Python package
+				if(NOT DEFINED _EMSCRIPTEN_PYTHON_PACKAGE_VERSION_)
+					set(_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_ "${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}")
+				endif()
+				
+				if("${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}" VERSION_GREATER "${_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_}")
+					set(_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_ "${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}")
+				endif()
+			elseif(NOT "${FOUND_EMSCRIPTEN_NODE_PACKAGE}" STREQUAL "-1") # Node package
+				if(NOT DEFINED _EMSCRIPTEN_NODE_PACKAGE_VERSION_)
+					set(_EMSCRIPTEN_NODE_PACKAGE_VERSION_ "${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}")
+				endif()
+				
+				if("${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}" VERSION_GREATER "${_EMSCRIPTEN_NODE_PACKAGE_VERSION_}")
+					set(_EMSCRIPTEN_NODE_PACKAGE_VERSION_ "${EMSCRIPTEN_RUNTIME_CURRENT_VERSION}")
+				endif()
+			endif()
+		endforeach()
+		
+		if(NOT DEFINED _EMSCRIPTEN_SDK_PACKAGE_VERSION_)
+			message(FATAL_ERROR "Could not find any 'Microsoft.NET.Runtime.Emscripten.${FORCE_EMSCRIPTEN_VERSION}.Sdk.win-x64' package. Make sure your '.NET WebAssembly build tools' Visual Studio package is installed and is complete or use 'EMSCRIPTEN_EMSDK_DIR' variable!")
+		endif()
+
+		if(NOT DEFINED _EMSCRIPTEN_PYTHON_PACKAGE_VERSION_)
+			message(FATAL_ERROR "Could not find any 'Microsoft.NET.Runtime.Emscripten.${FORCE_EMSCRIPTEN_VERSION}.Python.win-x64' package. Make sure your '.NET WebAssembly build tools' Visual Studio package is installed and is complete or use 'EMSCRIPTEN_EMSDK_DIR' variable!")
+		endif()
+
+		if(NOT DEFINED _EMSCRIPTEN_NODE_PACKAGE_VERSION_)
+			message(FATAL_ERROR "Could not find any 'Microsoft.NET.Runtime.Emscripten.${FORCE_EMSCRIPTEN_VERSION}.Node.win-x64' package. Make sure your '.NET WebAssembly build tools' Visual Studio package is installed and is complete or use 'EMSCRIPTEN_EMSDK_DIR' variable!")
+		endif()
+
+		set(_EMSCRIPTEN_RUNTIME_PACKAGES_VERSION_ "${_EMSCRIPTEN_SDK_PACKAGE_VERSION_}")
+		if("${_EMSCRIPTEN_SDK_PACKAGE_VERSION_}" VERSION_EQUAL "${_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_}" AND "${_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_}" VERSION_EQUAL "${_EMSCRIPTEN_NODE_PACKAGE_VERSION_}")
+			message(STATUS "Found '${_EMSCRIPTEN_RUNTIME_PACKAGES_VERSION_}' version for Emscripten runtimes and packages")
+		else()
+			message(FATAL_ERROR "Found all Emscripten required packages but their versions are not same. Please make sure your '.NET WebAssembly build tools' Visual Studio package is installed and is complete or use 'EMSCRIPTEN_EMSDK_DIR' variable!\n_EMSCRIPTEN_SDK_PACKAGE_VERSION_='${_EMSCRIPTEN_SDK_PACKAGE_VERSION_}'\n_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_='${_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_}'\n_EMSCRIPTEN_NODE_PACKAGE_VERSION_='${_EMSCRIPTEN_NODE_PACKAGE_VERSION_}'")
+		endif()
+		
+		unset(DOTNET_EMSCRIPTEN_BINARYEN_ROOT)
+		unset(DOTNET_EMSCRIPTEN_LLVM_ROOT)
+		unset(DOTNET_EMSCRIPTEN_NODE_JS)
+
+		file(GLOB DOTNET_EMSCRIPTEN_SDK_PACKAGE_DIRS LIST_DIRECTORIES ON RELATIVE "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${_EMSCRIPTEN_SDK_PACKAGE_VERSION_}.Sdk.win-x64" "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${_EMSCRIPTEN_SDK_PACKAGE_VERSION_}.Sdk.win-x64/*")
+		file(GLOB DOTNET_EMSCRIPTEN_PYTHON_PACKAGE_DIRS LIST_DIRECTORIES ON RELATIVE "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_}.Python.win-x64" "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_}.Python.win-x64/*")
+		file(GLOB DOTNET_EMSCRIPTEN_NODE_PACKAGE_DIRS LIST_DIRECTORIES ON RELATIVE "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${_EMSCRIPTEN_NODE_PACKAGE_VERSION_}.Node.win-x64" "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${_EMSCRIPTEN_NODE_PACKAGE_VERSION_}.Node.win-x64/*")
+
+		list(LENGTH DOTNET_EMSCRIPTEN_SDK_PACKAGE_DIRS _TMP_LENGTH_)
+		if(NOT "${_TMP_LENGTH_}" STREQUAL "1")
+			message(FATAL_ERROR "Expected only one version of dotnet package for the Sdk runtime installed by Visual Studio! Make sure your '.NET WebAssembly build tools' Visual Studio package is installed and is complete or use 'EMSCRIPTEN_EMSDK_DIR' variable!")
+		endif()
+
+		list(LENGTH DOTNET_EMSCRIPTEN_PYTHON_PACKAGE_DIRS _TMP_LENGTH_)
+		if(NOT "${_TMP_LENGTH_}" STREQUAL "1")
+			message(FATAL_ERROR "Expected only one version of dotet package for the Python runtime installed by Visual Studio! Make sure your '.NET WebAssembly build tools' Visual Studio package is installed and is complete or use 'EMSCRIPTEN_EMSDK_DIR' variable!")
+		endif()
+
+		list(LENGTH DOTNET_EMSCRIPTEN_NODE_PACKAGE_DIRS _TMP_LENGTH_)
+		if(NOT "${_TMP_LENGTH_}" STREQUAL "1")
+			message(FATAL_ERROR "Expected only one version of dotnet package for the Node runtime installed by Visual Studio! Make sure your '.NET WebAssembly build tools' Visual Studio package is installed and is complete or use 'EMSCRIPTEN_EMSDK_DIR' variable!")
+		endif()
+		
+		set(_VS_EMSCRIPTEN_EMSDK_DIR_ "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${_EMSCRIPTEN_SDK_PACKAGE_VERSION_}.Sdk.win-x64/${DOTNET_EMSCRIPTEN_SDK_PACKAGE_DIRS}/tools/emscripten")
+		cmake_path(GET _VS_EMSCRIPTEN_EMSDK_DIR_ PARENT_PATH DOTNET_EMSCRIPTEN_BINARYEN_ROOT)
+		set(DOTNET_EMSCRIPTEN_LLVM_ROOT "${DOTNET_EMSCRIPTEN_BINARYEN_ROOT}/bin")
+		set(DOTNET_EMSCRIPTEN_NODE_JS "${DOTNET_PACKS_DIR}/Microsoft.NET.Runtime.Emscripten.${_EMSCRIPTEN_SDK_PACKAGE_VERSION_}.Node.win-x64/${DOTNET_EMSCRIPTEN_NODE_PACKAGE_DIRS}/tools/bin")
+			
+		set(EMSCRIPTEN_ENV_SET_BAT_FILE "${CMAKE_CURRENT_BINARY_DIR}/emscripten/env/setEnvs.cmd" CACHE FILEPATH INTERNAL FORCE)	
+		set(EMSCRIPTEN_ENV_SET_BAT_WARPPER_CODE
+"set \"DOTNET_EMSCRIPTEN_BINARYEN_ROOT=${DOTNET_EMSCRIPTEN_BINARYEN_ROOT}\"\n\
+set \"DOTNET_EMSCRIPTEN_LLVM_ROOT=${DOTNET_EMSCRIPTEN_LLVM_ROOT}\"\n\
+set \"DOTNET_EMSCRIPTEN_NODE_JS=${DOTNET_EMSCRIPTEN_NODE_JS}\""
+		)
+			
+		file(WRITE "${EMSCRIPTEN_ENV_SET_BAT_FILE}" "${EMSCRIPTEN_ENV_SET_BAT_WARPPER_CODE}")	
+	else()
+		set(_EMSCRIPTEN_RUNTIME_PACKAGES_VERSION_ latest)
+	endif()
 	
-set(WRAPPER_FILE_PATH "${CMAKE_CURRENT_BINARY_DIR}/cmake/wrapper/override_project_json.cmake" CACHE INTERNAL "")
-file(WRITE "${WRAPPER_FILE_PATH}" "${WRAPPER_FILE_CONTENT}")
+	set(EMSCRIPTEN_BINARY_DIR "${FC_EXTERNAL_BINARY_DIR}/emscripten" CACHE INTERNAL "")
+	set(EMSCRIPTEN_DOWNLOAD_DIR "${EMSCRIPTEN_BINARY_DIR}/download" CACHE INTERNAL "")
+	set(EMSCRIPTEN_UNPACK_DIR "${EMSCRIPTEN_BINARY_DIR}/unpack" CACHE INTERNAL "")
+	set(EMSCRIPTEN_INSTALL_DIR "${EMSCRIPTEN_UNPACK_DIR}" CACHE INTERNAL "")
+	
+	FetchContent_Declare(
+		Emscripten
+		GIT_REPOSITORY    "https://github.com/Devsh-Graphics-Programming/emsdk.git"
+		GIT_TAG 		  e41b8c68a248da5f18ebd03bd0420953945d52ff # 3.1.24, but use it as a hash!
+		DOWNLOAD_DIR      "${EMSCRIPTEN_DOWNLOAD_DIR}"
+		SOURCE_DIR		  "${EMSCRIPTEN_UNPACK_DIR}"
+		BINARY_DIR        "${EMSCRIPTEN_INSTALL_DIR}"
+	)
+	
+	if(NOT DEFINED FC_EMSCRIPTEN_POPULATED OR NOT ${FC_EMSCRIPTEN_POPULATED})
+		message(STATUS "Populating Emscripten...")
+		
+		FetchContent_MakeAvailable(Emscripten)
+		FetchContent_GetProperties(Emscripten POPULATED _FC_EMSCRIPTEN_POPULATED_)
+		
+		if(${_FC_EMSCRIPTEN_POPULATED_})
+			set(FC_EMSCRIPTEN_POPULATED ON CACHE INTERNAL "")
+		
+			execute_process(
+				COMMAND "${EMSCRIPTEN_UNPACK_DIR}/emsdk.bat" install ${_EMSCRIPTEN_RUNTIME_PACKAGES_VERSION_}
+				OUTPUT_QUIET
+				ERROR_QUIET
+			)
+			
+			execute_process(
+				COMMAND "${EMSCRIPTEN_UNPACK_DIR}/emsdk.bat" activate ${_EMSCRIPTEN_RUNTIME_PACKAGES_VERSION_}
+				OUTPUT_QUIET
+				ERROR_QUIET
+			)
+		else()
+			set(FC_EMSCRIPTEN_POPULATED OFF CACHE INTERNAL "")
+		endif()
+		
+		unset(_FC_EMSCRIPTEN_POPULATED_)
+	endif()
+	
+	set(EMSCRIPTEN_EMSDK_DIR "${EMSCRIPTEN_UNPACK_DIR}/upstream/emscripten" CACHE PATH "" FORCE)
+endif()
 
+find_file(EMSCRIPTEN_TOOLCHAIN_FILE "Emscripten.cmake" 
+	HINTS "${_EMSCRIPTEN_TOOLCHAIN_FILE_HINT_DIR_}" # define this variable in case find_file cannot find your toolchain file
+	HINTS "${EMSCRIPTEN_EMSDK_DIR}"
+	HINTS "${EMSCRIPTEN_EMSDK_DIR}/cmake/Modules/Platform"
+	HINTS "${EMSCRIPTEN_EMSDK_DIR}/upstream/emscripten/cmake/Modules/Platform"
+	REQUIRED
+)
+
+find_file(EMRUN_PATH "emrun.bat" 
+	HINTS "${_EMRUN_FILE_HINT_DIR_}" # define this variable in case find_file cannot find your emrun.bat file
+	HINTS "${EMSCRIPTEN_EMSDK_DIR}"
+	HINTS "${EMSCRIPTEN_EMSDK_DIR}"
+	HINTS "${EMSCRIPTEN_EMSDK_DIR}/upstream/emscripten"
+	REQUIRED
+)
+
+set(EMRUN_PYTHON_SCRIPT_PATH "${CMAKE_CURRENT_BINARY_DIR}/cmake/run.py" CACHE INTERNAL "")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/run.py.cmake" "${EMRUN_PYTHON_SCRIPT_PATH}")
+
+# CMake utilities
 function(ADD_EMSCRIPTEN_PROJECT _CMAKE_SETTINGS_JSON_PATH_)
 	cmake_path(GET _CMAKE_SETTINGS_JSON_PATH_ PARENT_PATH _PROJECT_DIRECTORY_)
 	cmake_path(GET _PROJECT_DIRECTORY_ FILENAME _PROJECT_TARGET_NAME_)
 
 	set(_THIS_PROJECT_BUILD_DIRECTORY_ "${_PROJECTS_BUILD_DIRECTORY_}/${_PROJECT_TARGET_NAME_}")
 	configure_file("${_CMAKE_SETTINGS_JSON_PATH_}" "${_PROJECT_DIRECTORY_}/CMakeSettings.json")
+	configure_file("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmake/launch.vs.json.cmake" "${_PROJECT_DIRECTORY_}/.vs/launch.vs.json")
 	
 	if(GENERATE_BUILD_ONLY_TARGETS)
 		set(_PROJECT_EXT_SOURCE_DIR_ "${_PROJECT_DIRECTORY_}")
