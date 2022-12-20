@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
-set(SERVE_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "")
+
+set(SERVE_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "" FORCE)
 
 set(CMAKE_CONFIGURATION_TYPES
 	Release
@@ -17,3 +18,7 @@ add_subdirectory(3rdparty 3rdparty)
 
 ADD_EMSCRIPTEN_PROJECT("${CMAKE_CURRENT_SOURCE_DIR}/EmscriptenHTML5/CMakeSettings.json.cmake")
 ADD_EMSCRIPTEN_PROJECT("${CMAKE_CURRENT_SOURCE_DIR}/EmscriptenGLFW/CMakeSettings.json.cmake")
+
+execute_process(COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_BINARY_DIR}/data"
+				COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/data" "${CMAKE_BINARY_DIR}/data"
+)

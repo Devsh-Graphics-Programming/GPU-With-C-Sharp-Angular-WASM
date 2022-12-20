@@ -3,14 +3,26 @@
   "defaults": {},
   "configurations": [
     {
-      "type": "python",
-      "project": "@EMRUN_PYTHON_SCRIPT_PATH@ $(BaseOutputPath) $(AssemblyName) True",
-      "name": "Launch on localhost and open browser"
+      "type": "default",
+      "project": "@Python3_EXECUTABLE@",
+      "name": "Launch on localhost and open browser",
+	  "args": 
+	  [
+        "@EMRUN_PYTHON_SCRIPT_PATH@",
+        "${env.ENV_HTML_FILE}",
+		"True"
+      ]
     },
     {
-      "type": "python",
-      "project": "@EMRUN_PYTHON_SCRIPT_PATH@ $(BaseOutputPath) $(AssemblyName) False",
-      "name": "Launch on localhost (no browser)"
+      "type": "default",
+      "project": "@Python3_EXECUTABLE@",
+      "name": "Launch on localhost (no browser)",
+	  "args": 
+	  [
+        "@EMRUN_PYTHON_SCRIPT_PATH@",
+        "${env.ENV_HTML_FILE}",
+		"False"
+      ]
     }
   ]
 }

@@ -1,6 +1,8 @@
 include(ExternalProject)
 include(FetchContent)
 
+find_package (Python3 COMPONENTS Interpreter REQUIRED)
+
 # Emscripten dependencies
 # - set EMSCRIPTEN_EMSDK_DIR in order to not rely on CMake fetching content of Emscripten's emsdk 
 set(FC_EXTERNAL_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/external")
@@ -203,8 +205,8 @@ find_file(EMRUN_PATH "emrun.bat"
 
 set(EMRUN_PYTHON_SCRIPT_PATH "${CMAKE_CURRENT_BINARY_DIR}/cmake/run.py" CACHE INTERNAL "" FORCE)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/run.py.cmake" "${EMRUN_PYTHON_SCRIPT_PATH}")
-string(REPLACE "/" "\\\\" EMRUN_PYTHON_SCRIPT_PATH_NP "${EMRUN_PYTHON_SCRIPT_PATH}")
-set(EMRUN_PYTHON_SCRIPT_PATH "${EMRUN_PYTHON_SCRIPT_PATH_NP}" CACHE INTERNAL "" FORCE)
+string(REPLACE "/" "\\\\" Python3_EXECUTABLE_NP "${Python3_EXECUTABLE}")
+set(Python3_EXECUTABLE "${Python3_EXECUTABLE_NP}" CACHE INTERNAL "" FORCE)
 
 # CMake utilities
 function(ADD_EMSCRIPTEN_PROJECT _CMAKE_SETTINGS_JSON_PATH_)
@@ -213,7 +215,7 @@ function(ADD_EMSCRIPTEN_PROJECT _CMAKE_SETTINGS_JSON_PATH_)
 
 	set(_THIS_PROJECT_BUILD_DIRECTORY_ "${_PROJECTS_BUILD_DIRECTORY_}/${_PROJECT_TARGET_NAME_}")
 	configure_file("${_CMAKE_SETTINGS_JSON_PATH_}" "${_PROJECT_DIRECTORY_}/CMakeSettings.json")
-	configure_file("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmake/launch.vs.json.cmake" "${_PROJECT_DIRECTORY_}/.vs/launch.vs.json")
+	configure_file("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmake/launch.vs.json.cmake" "${_PROJECT_DIRECTORY_}/.vs/launch.vs.json" @ONLY)
 	
 	if(GENERATE_BUILD_ONLY_TARGETS)
 		set(_PROJECT_EXT_SOURCE_DIR_ "${_PROJECT_DIRECTORY_}")
