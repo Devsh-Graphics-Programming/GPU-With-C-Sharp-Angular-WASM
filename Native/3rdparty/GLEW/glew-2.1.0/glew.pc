@@ -1,6 +1,6 @@
-prefix=C:/Program Files (x86)/NativeApplication
+prefix=C:/Program Files (x86)/GPU-With-C-Sharp-Angular-WASM
 exec_prefix=${prefix}
-libdir=C:/Program Files (x86)/NativeApplication/lib
+libdir=C:/Program Files (x86)/GPU-With-C-Sharp-Angular-WASM/lib
 includedir=${prefix}/include
 
 Name: glew

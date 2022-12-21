@@ -87,7 +87,7 @@ namespace NativeCSharp
 		{
 			Console.WriteLine("Loading cubemaps");
 			selectedCubemap = 0;
-			string storageDir = "../../../../../data/env/";
+			string storageDir = "../../../../data/env/";
 			string[][] faces = new string[][] {
 				new [] {"back.jpg",   "front.jpg",   "top.jpg",   "bottom.jpg",   "right.jpg",   "left.jpg"},
 				new [] {"back1.jpg",  "front1.jpg",  "top1.jpg",  "bottom1.jpg",  "right1.jpg",  "left1.jpg"}
@@ -130,7 +130,7 @@ namespace NativeCSharp
 
 		void LoadShader(string shaderPath, uint shaderType)
 		{
-			var shaderCode = new string[] { File.ReadAllText("../../../../../data/" + shaderPath) };
+			var shaderCode = new string[] { File.ReadAllText("../../../../data/" + shaderPath) };
 			uint shader = glCreateShader(shaderType);
 			glShaderSource(shader, 1, shaderCode, null);
 			glCompileShader(shader);
