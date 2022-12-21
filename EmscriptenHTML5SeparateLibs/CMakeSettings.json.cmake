@@ -2,49 +2,49 @@
   "configurations": [
     {
       "buildCommandArgs": "",
-      "buildRoot": "${projectDir}\\build\\${name}",
+      "buildRoot": "@_THIS_PROJECT_BUILD_DIRECTORY_@/WASM-RelWithDebInfo",
       "cmakeCommandArgs": "",
-      "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
+      "cmakeToolchain": "@EMSCRIPTEN_TOOLCHAIN_FILE@",
       "configurationType": "RelWithDebInfo",
       "ctestCommandArgs": "",
       "generator": "Ninja",
       "inheritEnvironments": [ "linux_x64" ],
-      "installRoot": "${projectDir}\\install\\${name}",
+      "installRoot": "@_THIS_PROJECT_BUILD_DIRECTORY_@/install/WASM-RelWithDebInfo",
       "name": "WASM-RelWithDebInfo",
       "variables": [
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
           "value": "-O1 -g --emrun",
           "type": "STRING"
-        },
+        }
+      ],
+	  "environments": [
         {
-          "name": "CMAKE_EXE_LINKER_FLAGS_RWDI",
-          "value": "-O1 -g --emrun",
-          "type": "STRING"
+          "ENV_HTML_FILE": "@_THIS_PROJECT_BUILD_DIRECTORY_@/WASM-RelWithDebInfo/@_PROJECT_TARGET_NAME_@.html"
         }
       ]
     },
     {
       "buildCommandArgs": "",
-      "buildRoot": "${projectDir}\\build\\${name}",
+      "buildRoot": "@_THIS_PROJECT_BUILD_DIRECTORY_@/WASM-Release",
       "cmakeCommandArgs": "",
-      "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
+      "cmakeToolchain": "@EMSCRIPTEN_TOOLCHAIN_FILE@",
       "configurationType": "Release",
       "ctestCommandArgs": "",
       "generator": "Ninja",
       "inheritEnvironments": [ "linux_x64" ],
-      "installRoot": "${projectDir}\\install\\${name}",
+      "installRoot": "@_THIS_PROJECT_BUILD_DIRECTORY_@/install/WASM-Release",
       "name": "WASM-Release",
       "variables": [
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
           "value": "-O3",
           "type": "STRING"
-        },
+        }
+      ],
+	  "environments": [
         {
-          "name": "CMAKE_EXE_LINKER_FLAGS_RELEASE",
-          "value": "-O3",
-          "type": "STRING"
+          "ENV_HTML_FILE": "@_THIS_PROJECT_BUILD_DIRECTORY_@/WASM-Release/@_PROJECT_TARGET_NAME_@.html"
         }
       ]
     },
@@ -52,23 +52,23 @@
       "name": "WASM-Debug",
       "generator": "Ninja",
       "configurationType": "Debug",
-      "buildRoot": "${projectDir}\\build\\${name}",
-      "installRoot": "${projectDir}\\install\\${name}",
+      "buildRoot": "@_THIS_PROJECT_BUILD_DIRECTORY_@/WASM-Debug",
+      "installRoot": "@_THIS_PROJECT_BUILD_DIRECTORY_@/install/WASM-Debug",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "cmakeToolchain": "${env.EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake",
+      "cmakeToolchain": "@EMSCRIPTEN_TOOLCHAIN_FILE@",
       "inheritEnvironments": [ "linux_x64" ],
       "variables": [
-        {
-          "name": "CMAKE_C_FLAGS_DEBUG",
-          "value": "-O0 -g --emrun",
-          "type": "STRING"
-        },
         {
           "name": "CMAKE_EXE_LINKER_FLAGS",
           "value": "-O0 -g --emrun",
           "type": "STRING"
+        }
+      ],
+	  "environments": [
+        {
+          "ENV_HTML_FILE": "@_THIS_PROJECT_BUILD_DIRECTORY_@/WASM-Debug/@_PROJECT_TARGET_NAME_@.html"
         }
       ]
     }
