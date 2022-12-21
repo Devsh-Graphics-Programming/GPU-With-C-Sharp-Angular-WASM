@@ -244,3 +244,17 @@ function(ADD_EMSCRIPTEN_PROJECT _CMAKE_SETTINGS_JSON_PATH_)
 	
 	unset(_THIS_PROJECT_BUILD_DIRECTORY_)
 endfunction()
+
+function(ADD_NATIVE_PROJECT _PROJECT_PATH_ _IS_CPP_)
+	if(GENERATE_BUILD_ONLY_TARGETS)
+		cmake_path(GET _PROJECT_PATH_ FILENAME _PROJECT_TARGET_NAME_)
+
+		set(_THIS_PROJECT_BUILD_DIRECTORY_ "${_PROJECTS_BUILD_DIRECTORY_}/${_PROJECT_TARGET_NAME_}")
+	
+		if(_IS_CPP_) # C++ Native
+			add_subdirectory("${_PROJECT_PATH_}" "${_THIS_PROJECT_BUILD_DIRECTORY_}")
+		else() # C-Sharp Native
+			# TODO
+		endif()
+	endif()
+endfunction()

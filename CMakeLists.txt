@@ -16,10 +16,13 @@ set(_PROJECTS_BUILD_DIRECTORY_ "${CMAKE_CURRENT_BINARY_DIR}/projects" CACHE INTE
 
 add_subdirectory(3rdparty 3rdparty)
 
-# Custom Emscripten
+# Custom Emscripten projects
 ADD_EMSCRIPTEN_PROJECT("${CMAKE_CURRENT_SOURCE_DIR}/EmscriptenHTML5/CMakeSettings.json.cmake")
 ADD_EMSCRIPTEN_PROJECT("${CMAKE_CURRENT_SOURCE_DIR}/EmscriptenHTML5SeparateLibs/CMakeSettings.json.cmake")
 ADD_EMSCRIPTEN_PROJECT("${CMAKE_CURRENT_SOURCE_DIR}/EmscriptenGLFW/CMakeSettings.json.cmake")
+
+# Native projects
+ADD_NATIVE_PROJECT("${CMAKE_CURRENT_SOURCE_DIR}/Native" ON)
 
 # Blazor's Emscripten
 # TODO
