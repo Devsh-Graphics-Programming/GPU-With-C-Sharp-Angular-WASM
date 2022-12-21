@@ -14,29 +14,29 @@ unset(_EMSCRIPTEN_SDK_PACKAGE_VERSION_)
 unset(_EMSCRIPTEN_PYTHON_PACKAGE_VERSION_)
 unset(_EMSCRIPTEN_NODE_PACKAGE_VERSION_)
 
+# Dotnet
+find_program(DOTNET_EXE "dotnet.exe" REQUIRED)
+cmake_path(GET DOTNET_EXE PARENT_PATH DOTNET_DIR_EXE)
+set(DOTNET_PACKS_DIR "${DOTNET_DIR_EXE}/packs")
+
+execute_process(COMMAND "${DOTNET_EXE}" --version
+	RESULT_VARIABLE DOTNET_RESULT
+	OUTPUT_VARIABLE  DOTNET_VERSION
+)
+
+if(NOT "${DOTNET_RESULT}" STREQUAL "0")
+	message(FATAL_ERROR "'${DOTNET_EXE}' --version failed. Inspect your executable!")
+endif()
+
+string(STRIP "${DOTNET_VERSION}" DOTNET_VERSION)
+
+message(STATUS "Found '${DOTNET_EXE}' with '${DOTNET_VERSION}' version")
+
 if(DEFINED EMSCRIPTEN_EMSDK_DIR)
 	if(NOT EXISTS "${EMSCRIPTEN_EMSDK_DIR}")
 		message(FATAL_ERROR "EMSCRIPTEN_EMSDK_DIR filepath doesn't exist!")
 	endif()
 else()
-	# Dotnet
-	find_program(DOTNET_EXE "dotnet.exe" REQUIRED)
-	cmake_path(GET DOTNET_EXE PARENT_PATH DOTNET_DIR_EXE)
-	set(DOTNET_PACKS_DIR "${DOTNET_DIR_EXE}/packs")
-
-	execute_process(COMMAND "${DOTNET_EXE}" --version
-		RESULT_VARIABLE DOTNET_RESULT
-		OUTPUT_VARIABLE  DOTNET_VERSION
-	)
-
-	if(NOT "${DOTNET_RESULT}" STREQUAL "0")
-		message(FATAL_ERROR "'${DOTNET_EXE}' --version failed. Inspect your executable!")
-	endif()
-
-	string(STRIP "${DOTNET_VERSION}" DOTNET_VERSION)
-
-	message(STATUS "Found '${DOTNET_EXE}' with '${DOTNET_VERSION}' version")
-
 	if(FORCE_BLAZOR_EMSCRIPTEN_MATCH)
 		if(NOT DEFINED FORCE_EMSCRIPTEN_VERSION OR "${FORCE_EMSCRIPTEN_VERSION}" STREQUAL "")
 			set(FORCE_EMSCRIPTEN_VERSION "*")
@@ -203,6 +203,19 @@ find_file(EMRUN_PATH "emrun.bat"
 	REQUIRED
 )
 
+# VC vars64
+get_filename_component(
+	MY_COMPILER_DIR
+	${CMAKE_CXX_COMPILER} DIRECTORY
+)
+find_file(
+	VCVARS64_BAT vcvars64.bat
+	"${MY_COMPILER_DIR}/../../../../../../Auxiliary/Build"
+)
+if ("${VCVARS64_BAT}" STREQUAL "VCVARS64_BAT-NOTFOUND")
+	message(FATAL_ERROR "Path to vcvars64.bat must be provided manually")
+endif()
+
 set(EMRUN_PYTHON_SCRIPT_PATH "${CMAKE_CURRENT_BINARY_DIR}/cmake/run.py" CACHE INTERNAL "" FORCE)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/run.py.cmake" "${EMRUN_PYTHON_SCRIPT_PATH}")
 string(REPLACE "/" "\\\\" Python3_EXECUTABLE_NP "${Python3_EXECUTABLE}")
@@ -254,7 +267,13 @@ function(ADD_NATIVE_PROJECT _PROJECT_PATH_ _IS_CPP_)
 		if(_IS_CPP_) # C++ Native
 			add_subdirectory("${_PROJECT_PATH_}" "${_THIS_PROJECT_BUILD_DIRECTORY_}")
 		else() # C-Sharp Native
-			# TODO
+			add_custom_target(${_PROJECT_TARGET_NAME_} ALL
+				COMMAND "${DOTNET_EXE}" build ${_PROJECT_TARGET_NAME_}.csproj -c $<IF:$<CONFIG:Debug>,Debug,Release> -o "${_THIS_PROJECT_BUILD_DIRECTORY_}"
+				WORKING_DIRECTORY "${_PROJECT_PATH_}"
+				VERBATIM
+			)
+			
+			configure_file("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmake/Directory.Build.props.cmake" "${_PROJECT_PATH_}/Directory.Build.props")
 		endif()
 	endif()
 endfunction()
