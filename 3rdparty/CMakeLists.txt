@@ -339,8 +339,10 @@ function(ADD_BLAZOR_EMSCRIPTEN_PROJECT _PROJECT_PATH_)
 			WORKING_DIRECTORY "${_PROJECT_PATH_}"
 			VERBATIM
 		)
-			
 		configure_file("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmake/cmake.props.cmake" "${_PROJECT_PATH_}/cmake.props")
+		
+		execute_process(COMMAND "${CMAKE_COMMAND}" -E make_directory "${_PROJECT_PATH_}/Client/SWIG")
+		execute_process(COMMAND "${CMAKE_COMMAND}" -E make_directory "${_PROJECT_PATH_}/ClientNoRazor/SWIG")
 	endif()
 endfunction()
 

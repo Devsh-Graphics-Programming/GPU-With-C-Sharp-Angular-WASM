@@ -25,28 +25,5 @@
   <PropertyGroup>
     <EmccExtraLDFlags> -sUSE_WEBGL2=1 -sFULL_ES3=1 -sWASM=1 -sWASM_BIGINT -sMIN_WEBGL_VERSION=2 -sASYNCIFY</EmccExtraLDFlags>
     <OutputType>Exe</OutputType>
-  </PropertyGroup>
-  
-  <!--Add neccessary Emscripten linker flags-->
-  <!--<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="python SWIG/fixswig.py&#xD;&#xA;" />
-  </Target>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles=" $(SolutionDir)..\data\shader.vert" DestinationFolder="$(ProjectDir)wwwroot\data" />
-    <Copy SourceFiles=" $(SolutionDir)..\data\shader.frag" DestinationFolder="$(ProjectDir)wwwroot\data" />
-    <Copy SourceFiles="$(SolutionDir)..\data\env\back.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\back1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\bottom.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\bottom1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\front.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\front1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\left.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\left1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\right.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\right1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\top.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-    <Copy SourceFiles="$(SolutionDir)..\data\env\top1.jpg" DestinationFolder="$(ProjectDir)wwwroot\data\env" /> 
-  </Target>-->
-
-        
+  </PropertyGroup>      
 </Project>
