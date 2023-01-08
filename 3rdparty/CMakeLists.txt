@@ -281,10 +281,15 @@ get_filename_component(
 find_file(
 	VCVARS64_BAT vcvars64.bat
 	"${MY_COMPILER_DIR}/../../../../../../Auxiliary/Build"
+	REQUIRED
 )
-if ("${VCVARS64_BAT}" STREQUAL "VCVARS64_BAT-NOTFOUND")
-	message(FATAL_ERROR "Path to vcvars64.bat must be provided manually")
-endif()
+
+# we cannot rely on MSBuild corresponding for certain arch, therefore using CMAKE_VS_MSBUILD_COMMAND is a bad idea
+find_file(
+	VCMSBUILD_EXE MSBuild.exe
+	HINTS "${MY_COMPILER_DIR}/../../../../../../../MSBuild/Current/Bin"
+	REQUIRED
+)
 
 set(EMRUN_PYTHON_SCRIPT_PATH "${CMAKE_CURRENT_BINARY_DIR}/cmake/run.py" CACHE INTERNAL "" FORCE)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/run.py.cmake" "${EMRUN_PYTHON_SCRIPT_PATH}")
@@ -335,7 +340,7 @@ function(ADD_BLAZOR_EMSCRIPTEN_PROJECT _PROJECT_PATH_)
 		set(_THIS_PROJECT_BUILD_DIRECTORY_ "${_PROJECTS_BUILD_DIRECTORY_}/${_PROJECT_TARGET_NAME_}")
 	
 		add_custom_target(${_PROJECT_TARGET_NAME_} ALL
-			COMMAND "${DOTNET_EXE}" build ${_PROJECT_TARGET_NAME_}.sln -c $<IF:$<CONFIG:Debug>,Debug,Release> -o "${_THIS_PROJECT_BUILD_DIRECTORY_}"
+			COMMAND "${VCMSBUILD_EXE}" ${_PROJECT_TARGET_NAME_}.sln -p:Configuration=$<IF:$<CONFIG:Debug>,Debug,Release>
 			WORKING_DIRECTORY "${_PROJECT_PATH_}"
 			VERBATIM
 		)
