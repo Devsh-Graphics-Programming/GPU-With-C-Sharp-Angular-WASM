@@ -291,6 +291,12 @@ find_file(
 	REQUIRED
 )
 
+find_file(
+	VSDEVENV_EXE devenv.exe
+	HINTS "${MY_COMPILER_DIR}/../../../../../../../Common7/IDE"
+	REQUIRED
+)
+
 set(EMRUN_PYTHON_SCRIPT_PATH "${CMAKE_CURRENT_BINARY_DIR}/cmake/run.py" CACHE INTERNAL "" FORCE)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/run.py.cmake" "${EMRUN_PYTHON_SCRIPT_PATH}")
 string(REPLACE "/" "\\\\" Python3_EXECUTABLE_NP "${Python3_EXECUTABLE}")
@@ -340,7 +346,10 @@ function(ADD_BLAZOR_EMSCRIPTEN_PROJECT _PROJECT_PATH_)
 		set(_THIS_PROJECT_BUILD_DIRECTORY_ "${_PROJECTS_BUILD_DIRECTORY_}/${_PROJECT_TARGET_NAME_}")
 	
 		add_custom_target(${_PROJECT_TARGET_NAME_} ALL
+			COMMAND "${VCMSBUILD_EXE}" ${_PROJECT_TARGET_NAME_}.sln -t:restore -p:RestorePackagesConfig=true
 			COMMAND "${VCMSBUILD_EXE}" ${_PROJECT_TARGET_NAME_}.sln -p:Configuration=$<IF:$<CONFIG:Debug>,Debug,Release>
+			COMMAND "${VSDEVENV_EXE}" BlazorEmscripten.sln $<IF:$<CONFIG:Debug>,Debug,Release> /Deploy
+			# TODO: we need to copy all missing files in wwwroot (we have them in one dir in build) and copy entire wwwroot to build dir
 			WORKING_DIRECTORY "${_PROJECT_PATH_}"
 			VERBATIM
 		)
