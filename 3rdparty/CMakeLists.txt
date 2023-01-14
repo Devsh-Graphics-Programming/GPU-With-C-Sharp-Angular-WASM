@@ -283,24 +283,31 @@ get_filename_component(
 	MY_COMPILER_DIR
 	${CMAKE_CXX_COMPILER} DIRECTORY
 )
-find_file(
-	VCVARS64_BAT vcvars64.bat
-	"${MY_COMPILER_DIR}/../../../../../../Auxiliary/Build"
-	REQUIRED
-)
+
+if(NOT DEFINED VCVARS64_BAT)
+	find_file(
+		VCVARS64_BAT "vcvars64.bat"
+		HINTS "${MY_COMPILER_DIR}/../../../../../../Auxiliary/Build"
+		REQUIRED
+	)
+endif()
 
 # we cannot rely on MSBuild corresponding for certain arch, therefore using CMAKE_VS_MSBUILD_COMMAND is a bad idea
-find_file(
-	VCMSBUILD_EXE MSBuild.exe
-	HINTS "${MY_COMPILER_DIR}/../../../../../../../MSBuild/Current/Bin"
-	REQUIRED
-)
+if(NOT DEFINED VCMSBUILD_EXE)
+	find_file(
+		VCMSBUILD_EXE "MSBuild.exe"
+		HINTS "${MY_COMPILER_DIR}/../../../../../../../MSBuild/Current/Bin"
+		REQUIRED
+	)
+endif()
 
-find_file(
-	VSDEVENV_EXE devenv.exe
-	HINTS "${MY_COMPILER_DIR}/../../../../../../../Common7/IDE"
-	REQUIRED
-)
+if(NOT DEFINED VSDEVENV_EXE)
+	find_file(
+		VSDEVENV_EXE "devenv.exe"
+		HINTS "${MY_COMPILER_DIR}/../../../../../../../Common7/IDE"
+		REQUIRED
+	)
+endif()
 
 set(EMRUN_PYTHON_SCRIPT_PATH "${CMAKE_CURRENT_BINARY_DIR}/cmake/run.py" CACHE INTERNAL "" FORCE)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/run.py.cmake" "${EMRUN_PYTHON_SCRIPT_PATH}")
