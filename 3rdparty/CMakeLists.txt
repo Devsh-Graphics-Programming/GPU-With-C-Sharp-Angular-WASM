@@ -344,12 +344,16 @@ function(ADD_BLAZOR_EMSCRIPTEN_PROJECT _PROJECT_PATH_)
 		cmake_path(GET _PROJECT_PATH_ FILENAME _PROJECT_TARGET_NAME_)
 
 		set(_THIS_PROJECT_BUILD_DIRECTORY_ "${_PROJECTS_BUILD_DIRECTORY_}/${_PROJECT_TARGET_NAME_}")
+		set(NET_VERSION "net6.0")
 	
 		add_custom_target(${_PROJECT_TARGET_NAME_} ALL
 			COMMAND "${VCMSBUILD_EXE}" ${_PROJECT_TARGET_NAME_}.sln -t:restore -p:RestorePackagesConfig=true
 			COMMAND "${VCMSBUILD_EXE}" ${_PROJECT_TARGET_NAME_}.sln -p:Configuration=$<IF:$<CONFIG:Debug>,Debug,Release>
 			COMMAND "${VSDEVENV_EXE}" BlazorEmscripten.sln $<IF:$<CONFIG:Debug>,Debug,Release> /Deploy
-			# TODO: we need to copy all missing files in wwwroot (we have them in one dir in build) and copy entire wwwroot to build dir
+			COMMAND "${CMAKE_COMMAND}" -E copy_directory "./Client/wwwroot" "./Client/bin/$<IF:$<CONFIG:Debug>,Debug,Release>/${NET_VERSION}/wwwroot"
+			COMMAND "${CMAKE_COMMAND}" -E copy_directory "${SERVE_ROOT_PATH}/data" "./Client/bin/$<IF:$<CONFIG:Debug>,Debug,Release>/${NET_VERSION}/wwwroot/data"
+			COMMAND "${CMAKE_COMMAND}" -E copy_directory "./ClientNoRazor/wwwroot" "./ClientNoRazor/bin/$<IF:$<CONFIG:Debug>,Debug,Release>/${NET_VERSION}/wwwroot"
+			COMMAND "${CMAKE_COMMAND}" -E copy_directory "${SERVE_ROOT_PATH}/data" "./ClientNoRazor/bin/$<IF:$<CONFIG:Debug>,Debug,Release>/${NET_VERSION}/wwwroot/data"
 			WORKING_DIRECTORY "${_PROJECT_PATH_}"
 			VERBATIM
 		)
