@@ -333,6 +333,10 @@ function(ADD_EMSCRIPTEN_PROJECT _CMAKE_SETTINGS_JSON_PATH_)
 			LOG_INSTALL		  1
 		)
 		
+		execute_process(COMMAND "${CMAKE_COMMAND}" -E make_directory "${_THIS_PROJECT_BUILD_DIRECTORY_}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_directory "${SERVE_ROOT_PATH}/data" "${_THIS_PROJECT_BUILD_DIRECTORY_}/data"
+		)
+		
 		unset(PROJECT_CMAKE_ARGS)
 	endif()
 	
@@ -383,3 +387,20 @@ function(ADD_NATIVE_PROJECT _PROJECT_PATH_ _IS_CPP_)
 		endif()
 	endif()
 endfunction()
+
+# do not specify configuration for a component - we are assuming that all of them will be built while invoking this
+install(DIRECTORY "${_PROJECTS_BUILD_DIRECTORY_}"
+		DESTINATION "${CMAKE_BINARY_DIR}/ci/wwwroot"
+		COMPONENT CI_DEPLOY
+		PATTERN "Native*" EXCLUDE
+)
+
+install(DIRECTORY "${SERVE_ROOT_PATH}/BlazorEmscripten/Client/bin"
+		DESTINATION "${CMAKE_BINARY_DIR}/ci/wwwroot/projects/BlazorEmscripten/Client"
+		COMPONENT CI_DEPLOY
+)
+
+install(DIRECTORY "${SERVE_ROOT_PATH}/BlazorEmscripten/ClientNoRazor/bin"
+		DESTINATION "${CMAKE_BINARY_DIR}/ci/wwwroot/projects/BlazorEmscripten/ClientNoRazor"
+		COMPONENT CI_DEPLOY
+)
