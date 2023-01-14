@@ -72,7 +72,10 @@ if(DEFINED EMSCRIPTEN_EMSDK_DIR)
 	endif()
 else()
 	# Dotnet
-	find_program(DOTNET_EXE "dotnet.exe" REQUIRED)
+	find_program(DOTNET_EXE "dotnet.exe"
+		HINTS DOTNET_EXE_DIR
+	    REQUIRED
+	)
 	cmake_path(GET DOTNET_EXE PARENT_PATH DOTNET_DIR_EXE)
 	set(DOTNET_PACKS_DIR "${DOTNET_DIR_EXE}/packs")
 
