@@ -1,12 +1,3 @@
 [submodule "Native/3rdparty/glfw"]
 	path = Native/3rdparty/glfw
 	url = git@github.com:glfw/glfw.git
-[submodule "3rdparty/emsdk"]
-	path = 3rdparty/emsdk
-	url = git@github.com:emscripten-core/emsdk.git
-[submodule "3rdparty/llvm"]
-	path = 3rdparty/llvm
-	url = git@github.com:Devsh-Graphics-Programming/llvm-project.git
-[submodule "3rdparty/reflecting-emscripten"]
-	path = 3rdparty/reflecting-emscripten
-	url = git@github.com:Devsh-Graphics-Programming/Reflecting-Emscripten.git
