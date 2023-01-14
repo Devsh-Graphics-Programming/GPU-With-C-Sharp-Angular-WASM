@@ -39,7 +39,6 @@ build*/*
 .vs
 .vscode
 
-build
 bin
 obj
 LibRenderer.tlog
