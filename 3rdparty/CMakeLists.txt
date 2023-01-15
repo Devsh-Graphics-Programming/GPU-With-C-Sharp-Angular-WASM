@@ -416,3 +416,10 @@ install(DIRECTORY "${SERVE_ROOT_PATH}/BlazorEmscripten/ClientNoRazor/bin"
 		DESTINATION "${CMAKE_BINARY_DIR}/ci/wwwroot/projects/BlazorEmscripten/ClientNoRazor"
 		COMPONENT CI_DEPLOY
 )
+
+set(PYTHON_HREFUPDATEBASE_PY "${CMAKE_CURRENT_SOURCE_DIR}/python/hrefUpdateBase.py")
+install(CODE "execute_process(COMMAND \"${Python3_EXECUTABLE}\" \"${PYTHON_HREFUPDATEBASE_PY}\" \"${CMAKE_BINARY_DIR}/ci/wwwroot/projects/BlazorEmscripten/Client/bin/Release/net6.0/wwwroot/index.html\" \"/GPU-With-C-Sharp-Angular-WASM/BlazorEmscripten/Client/bin/Release/net6.0/wwwroot/\")" COMPONENT CI_FINALIZE)
+install(CODE "execute_process(COMMAND \"${Python3_EXECUTABLE}\" \"${PYTHON_HREFUPDATEBASE_PY}\" \"${CMAKE_BINARY_DIR}/ci/wwwroot/projects/BlazorEmscripten/Client/bin/Debug/net6.0/wwwroot/index.html\" \"/GPU-With-C-Sharp-Angular-WASM/BlazorEmscripten/Client/bin/Debug/net6.0/wwwroot/\")" COMPONENT CI_FINALIZE)
+install(CODE "execute_process(COMMAND \"${Python3_EXECUTABLE}\" \"${PYTHON_HREFUPDATEBASE_PY}\" \"${CMAKE_BINARY_DIR}/ci/wwwroot/projects/BlazorEmscripten/ClientNoRazor/bin/Release/net6.0/wwwroot/index.html\" \"/GPU-With-C-Sharp-Angular-WASM/BlazorEmscripten/ClientNoRazor/bin/Release/net6.0/wwwroot/\")" COMPONENT CI_FINALIZE)
+install(CODE "execute_process(COMMAND \"${Python3_EXECUTABLE}\" \"${PYTHON_HREFUPDATEBASE_PY}\" \"${CMAKE_BINARY_DIR}/ci/wwwroot/projects/BlazorEmscripten/ClientNoRazor/bin/Debug/net6.0/wwwroot/index.html\" \"/GPU-With-C-Sharp-Angular-WASM/BlazorEmscripten/ClientNoRazor/bin/Debug/net6.0/wwwroot/\")" COMPONENT CI_FINALIZE)
+
