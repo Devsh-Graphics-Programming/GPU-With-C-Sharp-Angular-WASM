@@ -20,15 +20,16 @@
     <RootNamespace>LibRenderer</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(ProjectDir)..\cmake.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
     <ConfigurationType>WebAssembly</ConfigurationType>
     <PlatformToolset>emcc</PlatformToolset>
-    <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
+    <EmscriptenDir>$(CMAKE_EMSCRIPTEN_EMSDK_DIR)</EmscriptenDir>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
     <ConfigurationType>WebAssembly</ConfigurationType>
     <PlatformToolset>emcc</PlatformToolset>
-    <EmscriptenDir>$(EMSCRIPTEN)</EmscriptenDir>
+    <EmscriptenDir>$(CMAKE_EMSCRIPTEN_EMSDK_DIR)</EmscriptenDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -59,7 +60,11 @@
       <VerboseOutput>NoVerboseOutput</VerboseOutput>
     </ClCompile>
     <CustomBuildStep>
-      <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>
+      <Command>set "SWIG_LIB=$(CMAKE_SWIG_LIB_DIRECTORY)"
+"$(CMAKE_SWIG_EXECUTABLE)" -c++ -csharp -outdir "$(SolutionDir)Client\SWIG" -o "$(ProjectDir)renderer_wrap.cpp" "$(ProjectDir)renderer.i"
+"$(CMAKE_PYTHON)" "$(SolutionDir)..\3rdparty\python\fixswig.py" "$(SolutionDir)Client\Swig\LibRendererPINVOKE.cs"
+"$(CMAKE_SWIG_EXECUTABLE)" -c++ -csharp -outdir "$(SolutionDir)ClientNoRazor\SWIG" -o "$(ProjectDir)renderer_wrap.cpp" "$(ProjectDir)renderer.i"
+"$(CMAKE_PYTHON)" "$(SolutionDir)..\3rdparty\python\fixswig.py" "$(SolutionDir)ClientNoRazor\Swig\LibRendererPINVOKE.cs"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>$(ProjectDir)renderer_wrap.cpp</Outputs>
@@ -78,7 +83,11 @@
       <VerboseOutput>NoVerboseOutput</VerboseOutput>
     </ClCompile>
     <CustomBuildStep>
-      <Command>swig -c++ -csharp -outdir $(SolutionDir)Client/SWIG -o $(ProjectDir)renderer_wrap.cpp $(ProjectDir)renderer.i</Command>
+      <Command>set "SWIG_LIB=$(CMAKE_SWIG_LIB_DIRECTORY)"
+"$(CMAKE_SWIG_EXECUTABLE)" -c++ -csharp -outdir "$(SolutionDir)Client\SWIG" -o "$(ProjectDir)renderer_wrap.cpp" "$(ProjectDir)renderer.i"
+"$(CMAKE_PYTHON)" "$(SolutionDir)..\3rdparty\python\fixswig.py" "$(SolutionDir)Client\Swig\LibRendererPINVOKE.cs"
+"$(CMAKE_SWIG_EXECUTABLE)" -c++ -csharp -outdir "$(SolutionDir)ClientNoRazor\SWIG" -o "$(ProjectDir)renderer_wrap.cpp" "$(ProjectDir)renderer.i"
+"$(CMAKE_PYTHON)" "$(SolutionDir)..\3rdparty\python\fixswig.py" "$(SolutionDir)ClientNoRazor\Swig\LibRendererPINVOKE.cs"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>$(ProjectDir)renderer_wrap.cpp</Outputs>

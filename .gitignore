@@ -1,3 +1,7 @@
+build*/*
+*/CMakeSettings.json
+*/Directory.Build.props
+
 # Prerequisites
 *.d
 
@@ -35,7 +39,6 @@
 .vs
 .vscode
 
-build
 bin
 obj
 LibRenderer.tlog
